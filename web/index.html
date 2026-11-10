@@ -36,21 +36,14 @@
       <!-- Interactive Input -->
       <div class="analyzer-box" id="analyzer">
         <div class="input-row">
-          <input type="url" id="product-url" placeholder="Paste Amazon, Flipkart, Walmart or Best Buy product URL..." value="https://www.amazon.com/dp/B0D1XD1ZV3" />
+          <input type="url" id="product-url" placeholder="Paste Amazon, Flipkart, Walmart or Best Buy product URL..." autofocus />
+          <button id="btn-paste-url" class="btn-paste" type="button" title="Paste link from clipboard">📋 Paste</button>
           <button id="btn-run-analysis" class="btn-analyze">Inspect Reviews ➔</button>
         </div>
 
         <div id="error-banner" class="error-banner hidden">
           <span class="error-icon">⚠️</span>
           <span id="error-banner-text">Error message</span>
-        </div>
-
-        <div class="samples-row">
-          <span class="sample-label">Quick Test Real Products:</span>
-          <button class="sample-btn active" data-url="https://www.amazon.com/dp/B0D1XD1ZV3">AirPods Pro 2 (Amazon)</button>
-          <button class="sample-btn" data-url="https://www.amazon.com/dp/B09V3HN1KC">iPad Air M1 (Amazon)</button>
-          <button class="sample-btn" data-url="https://www.amazon.com/dp/B08N5KWB9H">MacBook Air M1 (Amazon)</button>
-          <button class="sample-btn" data-url="https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm6ac6485515ae4">iPhone 15 (Flipkart)</button>
         </div>
       </div>
     </section>
@@ -319,11 +312,19 @@
       <!-- Review Feed -->
       <div class="card feed-card">
         <div class="feed-header">
-          <h3>Individual Review Forensics</h3>
+          <div>
+            <h3>Individual Review Forensics</h3>
+            <span class="sub-header-desc">Filter reviews by star rating or threat level</span>
+          </div>
           <div class="feed-tabs">
-            <button class="ftab active" data-filter="all">All Reviews (<span id="dash-cnt-all">0</span>)</button>
-            <button class="ftab" data-filter="flagged">Flagged Suspicious (<span id="dash-cnt-flagged">0</span>)</button>
-            <button class="ftab" data-filter="authentic">Verified Authentic (<span id="dash-cnt-authentic">0</span>)</button>
+            <button class="ftab active" data-filter="all">All (<span id="dash-cnt-all">0</span>)</button>
+            <button class="ftab" data-filter="5">5 ★ (<span id="dash-cnt-5">0</span>)</button>
+            <button class="ftab" data-filter="4">4 ★ (<span id="dash-cnt-4">0</span>)</button>
+            <button class="ftab" data-filter="3">3 ★ (<span id="dash-cnt-3">0</span>)</button>
+            <button class="ftab" data-filter="2">2 ★ (<span id="dash-cnt-2">0</span>)</button>
+            <button class="ftab" data-filter="1">1 ★ (<span id="dash-cnt-1">0</span>)</button>
+            <button class="ftab" data-filter="flagged">⚠️ Flagged (<span id="dash-cnt-flagged">0</span>)</button>
+            <button class="ftab" data-filter="authentic">✓ Authentic (<span id="dash-cnt-authentic">0</span>)</button>
           </div>
         </div>
         <div id="dash-review-list" class="reviews-container"></div>

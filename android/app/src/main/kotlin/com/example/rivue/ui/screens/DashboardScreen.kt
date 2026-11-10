@@ -67,6 +67,7 @@ fun DashboardScreen(
 
       // URL Input & Scan Action
       item {
+        val clipboardManager = androidx.compose.ui.platform.LocalClipboardManager.current
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -81,6 +82,17 @@ fun DashboardScreen(
                 label = { Text("Product URL") },
                 placeholder = { Text("Paste Amazon, Flipkart or Walmart link...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = {
+                  TextButton(
+                      onClick = {
+                        clipboardManager.getText()?.text?.let { text ->
+                          urlInput = text.trim()
+                        }
+                      }
+                  ) {
+                    Text("📋 PASTE", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                  }
+                },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp)
@@ -95,46 +107,6 @@ fun DashboardScreen(
             ) {
               Text("Analyze Product Reviews", fontWeight = FontWeight.Bold)
             }
-          }
-        }
-      }
-
-      // Quick Demo Shortcuts
-      item {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-          Text(
-              text = "Try Sample Products",
-              style = MaterialTheme.typography.titleSmall,
-              fontWeight = FontWeight.Bold
-          )
-          Row(
-              modifier = Modifier.fillMaxWidth(),
-              horizontalArrangement = Arrangement.spacedBy(8.dp)
-          ) {
-            SampleChip(
-                label = "Amazon Earbuds\n(Astroturfed)",
-                modifier = Modifier.weight(1f),
-                onClick = {
-                  urlInput = "https://www.amazon.com/dp/B09V3K4XYZ"
-                  onAnalyze(urlInput)
-                }
-            )
-            SampleChip(
-                label = "Flipkart Watch\n(Calling)",
-                modifier = Modifier.weight(1f),
-                onClick = {
-                  urlInput = "https://www.flipkart.com/chronopro-amoled-smartwatch/p/itm123456789"
-                  onAnalyze(urlInput)
-                }
-            )
-            SampleChip(
-                label = "Walmart Chair\n(Genuine)",
-                modifier = Modifier.weight(1f),
-                onClick = {
-                  urlInput = "https://www.walmart.com/ip/ErgoMax-Mesh-Office-Chair/55481923"
-                  onAnalyze(urlInput)
-                }
-            )
           }
         }
       }

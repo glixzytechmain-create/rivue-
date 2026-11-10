@@ -4,6 +4,8 @@ import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -217,15 +219,31 @@ fun AnalysisResultScreen(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
           Text("Review Inspection Feed", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
 
-          Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+          val scrollState = rememberScrollState()
+          Row(
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .horizontalScroll(scrollState),
+              horizontalArrangement = Arrangement.spacedBy(8.dp)
+          ) {
             FilterTabButton("All (${result.reviews.size})", selectedTab == "all") { selectedTab = "all" }
-            FilterTabButton("Flagged (${result.suspiciousReviewsCount})", selectedTab == "flagged") { selectedTab = "flagged" }
-            FilterTabButton("Authentic (${result.reviews.size - result.suspiciousReviewsCount})", selectedTab == "authentic") { selectedTab = "authentic" }
+            FilterTabButton("5★ (${result.reviews.count { it.rating == 5 }})", selectedTab == "5") { selectedTab = "5" }
+            FilterTabButton("4★ (${result.reviews.count { it.rating == 4 }})", selectedTab == "4") { selectedTab = "4" }
+            FilterTabButton("3★ (${result.reviews.count { it.rating == 3 }})", selectedTab == "3") { selectedTab = "3" }
+            FilterTabButton("2★ (${result.reviews.count { it.rating == 2 }})", selectedTab == "2") { selectedTab = "2" }
+            FilterTabButton("1★ (${result.reviews.count { it.rating == 1 }})", selectedTab == "1") { selectedTab = "1" }
+            FilterTabButton("⚠️ Flagged (${result.suspiciousReviewsCount})", selectedTab == "flagged") { selectedTab = "flagged" }
+            FilterTabButton("✓ Authentic (${result.reviews.size - result.suspiciousReviewsCount})", selectedTab == "authentic") { selectedTab = "authentic" }
           }
         }
       }
 
       val filteredReviews = when (selectedTab) {
+        "5" -> result.reviews.filter { it.rating == 5 }
+        "4" -> result.reviews.filter { it.rating == 4 }
+        "3" -> result.reviews.filter { it.rating == 3 }
+        "2" -> result.reviews.filter { it.rating == 2 }
+        "1" -> result.reviews.filter { it.rating == 1 }
         "flagged" -> result.reviews.filter { it.isFlagged }
         "authentic" -> result.reviews.filter { !it.isFlagged }
         else -> result.reviews

@@ -12,8 +12,29 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentAnalysis = null;
   let activeFilter = 'all';
 
-  // Load default analysis on start
-  runAnalysis(inputUrl.value.trim());
+  const btnPaste = document.getElementById('btn-paste-url');
+
+  if (btnPaste) {
+    btnPaste.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim().startsWith('http')) {
+          inputUrl.value = text.trim();
+          if (errorBanner) errorBanner.classList.add('hidden');
+          runAnalysis(inputUrl.value.trim());
+        } else if (text) {
+          inputUrl.value = text.trim();
+        }
+      } catch (err) {
+        console.warn('Clipboard read error:', err);
+      }
+    });
+  }
+
+  // Load default analysis only if an initial value is provided
+  if (inputUrl.value.trim()) {
+    runAnalysis(inputUrl.value.trim());
+  }
 
   btnRun.addEventListener('click', () => {
     const url = inputUrl.value.trim();
@@ -295,9 +316,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const flagged = reviews.filter(r => r.isFlagged);
     const authentic = reviews.filter(r => !r.isFlagged);
 
-    document.getElementById('dash-cnt-all').textContent = reviews.length;
-    document.getElementById('dash-cnt-flagged').textContent = flagged.length;
-    document.getElementById('dash-cnt-authentic').textContent = authentic.length;
+    const elAll = document.getElementById('dash-cnt-all');
+    if (elAll) elAll.textContent = reviews.length;
+
+    const el5 = document.getElementById('dash-cnt-5');
+    if (el5) el5.textContent = reviews.filter(r => Math.round(r.rating) === 5).length;
+
+    const el4 = document.getElementById('dash-cnt-4');
+    if (el4) el4.textContent = reviews.filter(r => Math.round(r.rating) === 4).length;
+
+    const el3 = document.getElementById('dash-cnt-3');
+    if (el3) el3.textContent = reviews.filter(r => Math.round(r.rating) === 3).length;
+
+    const el2 = document.getElementById('dash-cnt-2');
+    if (el2) el2.textContent = reviews.filter(r => Math.round(r.rating) === 2).length;
+
+    const el1 = document.getElementById('dash-cnt-1');
+    if (el1) el1.textContent = reviews.filter(r => Math.round(r.rating) === 1).length;
+
+    const elFlagged = document.getElementById('dash-cnt-flagged');
+    if (elFlagged) elFlagged.textContent = flagged.length;
+
+    const elAuthentic = document.getElementById('dash-cnt-authentic');
+    if (elAuthentic) elAuthentic.textContent = authentic.length;
 
     renderReviewList(reviews, activeFilter);
   }
@@ -308,7 +349,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let filtered = reviews;
     if (filter === 'flagged') filtered = reviews.filter(r => r.isFlagged);
-    if (filter === 'authentic') filtered = reviews.filter(r => !r.isFlagged);
+    else if (filter === 'authentic') filtered = reviews.filter(r => !r.isFlagged);
+    else if (['1', '2', '3', '4', '5'].includes(filter)) {
+      const starTarget = parseInt(filter, 10);
+      filtered = reviews.filter(r => Math.round(r.rating) === starTarget);
+    }
 
     if (filtered.length === 0) {
       container.innerHTML = '<p style="text-align:center; padding: 24px; color: var(--text-muted);">No reviews in this category.</p>';
