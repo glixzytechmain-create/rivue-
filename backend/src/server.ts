@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
-import { scrapeProductWithAnakin } from './services/anakin';
+import { scrapeProductWithScraperApi } from './services/scraperApi';
 import { analyzeProductReviews } from './engine/ratingRecalculator';
 import { SAMPLE_PRODUCTS } from './fixtures/sampleProducts';
 import { AnalysisResult } from './types';
@@ -29,6 +29,7 @@ app.get('/api/health', (req: Request, res: Response) => {
     status: 'healthy',
     service: 'Rivue API Server',
     version: '1.0.0',
+    scraperApiConfigured: Boolean(process.env.SCRAPERAPI_KEY),
     anakinConfigured: Boolean(process.env.ANAKIN_API_KEY),
     cachedProducts: analysisCache.size,
     historyCount: analysisHistory.length
@@ -96,8 +97,8 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
 
     console.log(`[Rivue] Performing live review forensics for: ${cleanUrl}`);
 
-    // Fetch real product details, images & reviews via Anakin.io or client DOM
-    const { product, source } = await scrapeProductWithAnakin(cleanUrl, pageData);
+    // Fetch real product details, images & reviews via ScraperAPI or client DOM
+    const { product, source } = await scrapeProductWithScraperApi(cleanUrl, pageData);
 
     // Run core fake review detection & rating recalculator engine
     const analysis = analyzeProductReviews(product, source);

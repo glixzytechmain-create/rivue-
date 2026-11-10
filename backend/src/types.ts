@@ -96,5 +96,5 @@ export interface AnalysisResult {
   priceAnalysis?: PriceAnalysis;
   reviews: AnalyzedReview[];
   analyzedAt: string;
-  source: 'anakin-live' | 'cached' | 'fallback';
+  source: 'scraperapi-live' | 'anakin-live' | 'dom-live' | 'cached' | 'fallback';
 }

@@ -67,7 +67,10 @@ function extractAuthenticHighlights(reviews: AnalyzedReview[]): AuthenticHighlig
 /**
  * Synthesizes all review signals, recalibrates ratings, and produces the Rivue Trust Report.
  */
-export function analyzeProductReviews(product: ProductInfo, source: 'anakin-live' | 'cached' | 'fallback' = 'fallback'): AnalysisResult {
+export function analyzeProductReviews(
+  product: ProductInfo,
+  source: 'scraperapi-live' | 'anakin-live' | 'dom-live' | 'cached' | 'fallback' = 'fallback'
+): AnalysisResult {
   const reviews = product.reviews;
 
   // 1. Run detection algorithms
