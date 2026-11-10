@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rivue - Deep Review Inspector</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sidepanel-root">
+    <!-- Top Navigation Header -->
+    <header class="sp-header">
+      <div class="sp-brand">
+        <span class="sp-icon">🛡️</span>
+        <div>
+          <h2 class="sp-title">Rivue</h2>
+          <span class="sp-subtitle">Fake Review Forensics</span>
+        </div>
+      </div>
+      <div class="sp-header-actions">
+        <button id="sp-btn-refresh" class="icon-btn" title="Refresh Analysis">🔄</button>
+      </div>
+    </header>
+
+    <!-- URL Bar -->
+    <div class="sp-search-bar">
+      <input type="url" id="sp-input-url" placeholder="Inspect Amazon, Flipkart, Walmart product link..." />
+      <button id="sp-btn-search">Analyze</button>
+    </div>
+
+    <!-- Quick test items -->
+    <div class="sp-quick-chips">
+      <span class="chip-label">Quick test:</span>
+      <span class="chip" data-url="https://www.amazon.com/dp/B09V3K4XYZ">Amazon Earbuds (Astroturfed)</span>
+      <span class="chip" data-url="https://www.flipkart.com/chronopro-amoled-smartwatch/p/itm123456789">Flipkart Watch</span>
+      <span class="chip" data-url="https://www.walmart.com/ip/ErgoMax-Mesh-Office-Chair/55481923">Walmart Chair (Genuine)</span>
+    </div>
+
+    <!-- Loading State -->
+    <div id="sp-loading" class="sp-state-card hidden">
+      <div class="sp-spinner"></div>
+      <h3>Extracting Multi-Source Reviews</h3>
+      <p>Anakin.io is crawling marketplace reviews, evaluating bot patterns, and computing the authentic rating...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="sp-error" class="sp-state-card error hidden">
+      <span class="sp-error-icon">⚠️</span>
+      <p id="sp-error-text">Failed to fetch review data.</p>
+    </div>
+
+    <!-- Content State -->
+    <main id="sp-content" class="sp-content hidden">
+      <!-- Product Overview Card -->
+      <section class="sp-card product-card">
+        <div class="sp-product-layout">
+          <div class="sp-img-box">
+            <img id="sp-product-img" class="sp-product-thumb" src="" alt="Product Photo" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'" />
+          </div>
+          <div class="sp-details-box">
+            <span id="sp-marketplace-tag" class="marketplace-pill">AMAZON</span>
+            <h3 id="sp-product-title" class="product-title-text">Product Title</h3>
+            <div class="meta-row">
+              <span id="sp-product-price" class="product-price">$39.99</span>
+              <span class="meta-dot">•</span>
+              <span id="sp-original-review-count">2,450 Reviews Analyzed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rating Comparison & Grade Banner -->
+      <section class="sp-card hero-rating-card">
+        <div class="hero-header">
+          <div>
+            <span class="hero-label">AUTHENTICITY VERDICT</span>
+            <div id="sp-verdict-title" class="verdict-banner high-risk">High Risk</div>
+          </div>
+          <div class="grade-badge" id="sp-grade-badge">F</div>
+        </div>
+
+        <div class="hero-comparison">
+          <div class="comp-col">
+            <span class="comp-label">Marketplace Rating</span>
+            <div class="comp-rating"><span id="sp-orig-stars">4.8</span>★</div>
+            <span class="comp-sub">Original Published</span>
+          </div>
+
+          <div class="comp-divider">
+            <span class="arrow">➔</span>
+            <span id="sp-rating-delta" class="delta-tag negative">-2.1★</span>
+          </div>
+
+          <div class="comp-col highlight">
+            <span class="comp-label">Rivue Trust Rating</span>
+            <div class="comp-rating accent"><span id="sp-rivue-stars">2.7</span>★</div>
+            <span class="comp-sub">Recalculated Consensus</span>
+          </div>
+        </div>
+
+        <!-- Trust Meter -->
+        <div class="trust-index-container">
+          <div class="trust-index-header">
+            <span>Rivue Trust Index</span>
+            <strong id="sp-trust-score-val">25 / 100</strong>
+          </div>
+          <div class="trust-meter-track">
+            <div id="sp-trust-meter-fill" class="trust-meter-fill" style="width: 25%;"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Price & Value Intelligence Card -->
+      <section class="sp-card price-intel-card" id="sp-price-card">
+        <div class="card-title-row price-title-row">
+          <div class="title-with-icon">
+            <span class="icon">🏷️</span>
+            <h4>Price & Value Intelligence</h4>
+          </div>
+          <span id="sp-deal-badge" class="deal-pill badge-deal-fair">Fair Value</span>
+        </div>
+
+        <div class="sp-price-grid">
+          <div class="sp-price-box">
+            <span class="spp-label">Current Price</span>
+            <strong id="sp-price-current">$39.99</strong>
+            <span class="spp-sub">Marketplace</span>
+          </div>
+          <div class="sp-price-box">
+            <span class="spp-label">90-Day Avg</span>
+            <span id="sp-price-avg" class="spp-avg">$44.50</span>
+            <span class="spp-sub">Baseline</span>
+          </div>
+          <div class="sp-price-box worth-highlight">
+            <span class="spp-label">Worth It</span>
+            <strong id="sp-price-worth" class="spp-worth">$32.00</strong>
+            <span class="spp-sub">Verified Value</span>
+          </div>
+        </div>
+
+        <!-- Range Bar -->
+        <div class="sp-range-container">
+          <div class="sp-range-labels">
+            <span>Low: <strong id="sp-price-low">$29.99</strong></span>
+            <span id="sp-price-diff-tag" class="sp-diff-tag">Marked up +$7.99</span>
+            <span>High: <strong id="sp-price-high">$49.99</strong></span>
+          </div>
+          <div class="sp-range-track">
+            <div id="sp-range-fill" class="sp-range-fill" style="left: 20%; width: 45%;"></div>
+            <div id="sp-current-pin" class="sp-pin current-pin" style="left: 65%;" title="Current Price"></div>
+            <div id="sp-worth-pin" class="sp-pin worth-pin" style="left: 35%;" title="Worth It Price"></div>
+          </div>
+        </div>
+
+        <p id="sp-deal-explanation" class="sp-deal-desc">
+          Priced at $39.99, this item is marked up beyond its fair value of $32.00.
+        </p>
+
+        <!-- 90D History List -->
+        <div class="sp-history-block">
+          <span class="sp-hist-header">90-Day Price Trajectory</span>
+          <div id="sp-history-list" class="sp-hist-list">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Why it Differs Rationale Card -->
+      <section class="sp-card rationale-card">
+        <div class="card-title-row">
+          <span class="icon">🔍</span>
+          <h4>Why Rivue's Rating Differs</h4>
+        </div>
+        <p id="sp-explanation" class="rationale-text">
+          Explanation of review distribution and bot anomalies.
+        </p>
+
+        <ul id="sp-reasons-list" class="reasons-bullet-list">
+          <!-- Injected dynamically -->
+        </ul>
+      </section>
+
+      <!-- Deception Breakdown Analytics -->
+      <section class="sp-card analytics-card">
+        <h4>Threat & Deception Breakdown</h4>
+        
+        <div class="metric-row">
+          <div class="metric-info">
+            <span>Bot Duplicates & Copypastas</span>
+            <strong id="sp-breakdown-dup">50%</strong>
+          </div>
+          <div class="metric-bar"><div id="sp-bar-dup" class="metric-fill danger" style="width: 50%;"></div></div>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-info">
+            <span>Unverified 5-Star Purchases</span>
+            <strong id="sp-breakdown-unverified">60%</strong>
+          </div>
+          <div class="metric-bar"><div id="sp-bar-unverified" class="metric-fill warning" style="width: 60%;"></div></div>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-info">
+            <span>Unnatural Rating Velocity Spikes</span>
+            <strong id="sp-breakdown-velocity">High Risk</strong>
+          </div>
+          <div class="metric-bar"><div id="sp-bar-velocity" class="metric-fill danger" style="width: 90%;"></div></div>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-info">
+            <span>Sentiment & Star Contradictions</span>
+            <strong id="sp-breakdown-sentiment">0 Flags</strong>
+          </div>
+          <div class="metric-bar"><div id="sp-bar-sentiment" class="metric-fill success" style="width: 10%;"></div></div>
+        </div>
+      </section>
+
+      <!-- Authentic Highlights (Pros & Cons) -->
+      <section class="sp-card highlights-card">
+        <h4>Verified Buyer Consensus</h4>
+        <p class="section-sub">Synthesized solely from verified genuine buyers with no bot flags.</p>
+
+        <div class="pros-cons-grid">
+          <div class="pros-column">
+            <span class="pc-label pro">✓ Genuine Pros</span>
+            <ul id="sp-pros-list">
+              <!-- Injected -->
+            </ul>
+          </div>
+          <div class="cons-column">
+            <span class="pc-label con">✕ Genuine Cons</span>
+            <ul id="sp-cons-list">
+              <!-- Injected -->
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Review Feed & Inspection -->
+      <section class="sp-card reviews-feed-card">
+        <div class="feed-tabs">
+          <button class="tab-btn active" data-tab="all">All Reviews (<span id="sp-count-all">0</span>)</button>
+          <button class="tab-btn" data-tab="flagged">Flagged Suspicious (<span id="sp-count-flagged">0</span>)</button>
+          <button class="tab-btn" data-tab="authentic">Verified Authentic (<span id="sp-count-authentic">0</span>)</button>
+        </div>
+
+        <div id="sp-reviews-list" class="reviews-feed">
+          <!-- Injected dynamically -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>

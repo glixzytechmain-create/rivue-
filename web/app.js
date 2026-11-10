@@ -1,0 +1,263 @@
+// Rivue Web Application Controller
+document.addEventListener('DOMContentLoaded', () => {
+  const inputUrl = document.getElementById('product-url');
+  const btnRun = document.getElementById('btn-run-analysis');
+  const sampleBtns = document.querySelectorAll('.sample-btn');
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const resultsDashboard = document.getElementById('results-dashboard');
+  const ftabs = document.querySelectorAll('.ftab');
+
+  let currentAnalysis = null;
+  let activeFilter = 'all';
+
+  // Load default analysis on start
+  runAnalysis(inputUrl.value.trim());
+
+  btnRun.addEventListener('click', () => {
+    const url = inputUrl.value.trim();
+    if (url) runAnalysis(url);
+  });
+
+  inputUrl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') btnRun.click();
+  });
+
+  sampleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      sampleBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const url = btn.getAttribute('data-url');
+      inputUrl.value = url;
+      runAnalysis(url);
+    });
+  });
+
+  ftabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      ftabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeFilter = tab.getAttribute('data-filter');
+      if (currentAnalysis) renderReviewList(currentAnalysis.reviews, activeFilter);
+    });
+  });
+
+  async function runAnalysis(url) {
+    loadingOverlay.classList.remove('hidden');
+    resultsDashboard.style.opacity = '0.3';
+
+    try {
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      currentAnalysis = data;
+      renderDashboard(data);
+    } catch (err) {
+      console.error(err);
+      alert('Could not inspect product reviews: ' + err.message);
+    } finally {
+      loadingOverlay.classList.add('hidden');
+      resultsDashboard.style.opacity = '1';
+    }
+  }
+
+  function renderDashboard(data) {
+    // 1. Overview & Photo
+    const imgEl = document.getElementById('dash-img');
+    if (imgEl && data.product.imageUrl) {
+      imgEl.src = data.product.imageUrl;
+    }
+    document.getElementById('dash-marketplace').textContent = (data.product.marketplace || 'STORE').toUpperCase();
+    document.getElementById('dash-title').textContent = data.product.title;
+    document.getElementById('dash-price').textContent = data.product.price || '$39.99';
+    document.getElementById('dash-total-reviews').textContent = `${(data.product.originalReviewCount || 0).toLocaleString()} Total Reviews Analyzed`;
+
+    // 2. Verdict & Grade
+    const verdictEl = document.getElementById('dash-verdict');
+    verdictEl.textContent = data.verdict;
+    verdictEl.className = `verdict-title ${data.verdict.toLowerCase().replace(/\s+/g, '-')}`;
+
+    const gradeEl = document.getElementById('dash-grade');
+    gradeEl.textContent = data.grade;
+    gradeEl.className = `grade-badge grade-${data.grade}`;
+
+    // 3. Comparison
+    document.getElementById('dash-orig-rating').textContent = data.originalRating;
+    document.getElementById('dash-rivue-rating').textContent = data.rivueRating;
+
+    const deltaSign = data.ratingDifference > 0 ? '+' : '';
+    const deltaEl = document.getElementById('dash-delta-badge');
+    deltaEl.textContent = `${deltaSign}${data.ratingDifference}★`;
+    deltaEl.className = `delta-badge ${data.ratingDifference < 0 ? 'negative' : 'positive'}`;
+
+    // 4. Trust Meter
+    document.getElementById('dash-trust-val').textContent = `${data.trustScore} / 100`;
+    document.getElementById('dash-meter-fill').style.width = `${data.trustScore}%`;
+
+    // 4b. Price & Value Intelligence
+    if (data.priceAnalysis) {
+      const pa = data.priceAnalysis;
+      document.getElementById('price-current').textContent = pa.formattedCurrentPrice;
+      document.getElementById('price-average').textContent = pa.formattedAveragePrice;
+      document.getElementById('price-worth-it').textContent = pa.formattedWorthItPrice;
+      document.getElementById('price-lowest').textContent = pa.formattedLowestPrice;
+      document.getElementById('price-highest').textContent = pa.formattedHighestPrice;
+
+      // Badge
+      const dealBadgeEl = document.getElementById('price-deal-badge');
+      dealBadgeEl.textContent = pa.dealBadge;
+      dealBadgeEl.className = `deal-pill badge-deal-${pa.dealVerdict.toLowerCase().replace('_', '-')}`;
+
+      // Explanation
+      document.getElementById('price-deal-explanation').textContent = pa.dealExplanation;
+
+      // Difference summary
+      const diffEl = document.getElementById('price-diff-summary');
+      if (pa.priceDifference > 0) {
+        diffEl.textContent = `Overpriced +${pa.currency}${Math.abs(pa.priceDifference).toFixed(2)}`;
+        diffEl.style.color = '#f87171';
+      } else if (pa.priceDifference < 0) {
+        diffEl.textContent = `Save ${pa.currency}${Math.abs(pa.priceDifference).toFixed(2)} (Great Buy)`;
+        diffEl.style.color = '#34d399';
+      } else {
+        diffEl.textContent = 'Fair Market Match';
+        diffEl.style.color = '#60a5fa';
+      }
+
+      // Range Bar Pin positions (relative to lowest and highest)
+      const rangeSpan = Math.max(0.1, pa.highestPrice - pa.lowestPrice);
+      const currentPct = Math.max(5, Math.min(95, ((pa.currentPrice - pa.lowestPrice) / rangeSpan) * 100));
+      const worthPct = Math.max(5, Math.min(95, ((pa.worthItPrice - pa.lowestPrice) / rangeSpan) * 100));
+
+      const curPin = document.getElementById('range-current-pin');
+      const worthPin = document.getElementById('range-worth-pin');
+      const fillBar = document.getElementById('range-fill-bar');
+
+      if (curPin) curPin.style.left = `${currentPct}%`;
+      if (worthPin) worthPin.style.left = `${worthPct}%`;
+      if (fillBar) {
+        const left = Math.min(currentPct, worthPct);
+        const width = Math.abs(currentPct - worthPct);
+        fillBar.style.left = `${left}%`;
+        fillBar.style.width = `${Math.max(4, width)}%`;
+      }
+
+      // 90-Day History Timeline
+      const timelineEl = document.getElementById('price-history-timeline');
+      if (timelineEl) {
+        timelineEl.innerHTML = '';
+        (pa.history || []).forEach(pt => {
+          const card = document.createElement('div');
+          card.className = 'history-point-card';
+          card.innerHTML = `
+            <span class="hp-date">${pt.date}</span>
+            <span class="hp-price">${pt.formattedPrice}</span>
+            <span class="hp-label" title="${pt.label || ''}">${pt.label || 'Market Price'}</span>
+          `;
+          timelineEl.appendChild(card);
+        });
+      }
+    }
+
+    // 5. Rationale
+    document.getElementById('dash-explanation').textContent = data.explanation;
+    const reasonsList = document.getElementById('dash-reasons');
+    reasonsList.innerHTML = '';
+    (data.reasons || []).forEach(r => {
+      const li = document.createElement('li');
+      li.textContent = r;
+      reasonsList.appendChild(li);
+    });
+
+    // 6. Analytics Breakdown
+    document.getElementById('dash-bd-dup').textContent = `${data.breakdown.duplicateBotPercentage}%`;
+    document.getElementById('dash-bar-dup').style.width = `${data.breakdown.duplicateBotPercentage}%`;
+
+    document.getElementById('dash-bd-unverified').textContent = `${data.breakdown.unverifiedSpikePercentage}%`;
+    document.getElementById('dash-bar-unverified').style.width = `${data.breakdown.unverifiedSpikePercentage}%`;
+
+    const vel = data.breakdown.unnaturalDistributionScore;
+    document.getElementById('dash-bd-velocity').textContent = vel > 60 ? 'High Risk' : vel > 30 ? 'Moderate' : 'Normal';
+    document.getElementById('dash-bar-velocity').style.width = `${vel}%`;
+
+    document.getElementById('dash-bd-sentiment').textContent = `${data.breakdown.sentimentMismatchCount} Flag(s)`;
+    document.getElementById('dash-bar-sentiment').style.width = `${Math.min(100, data.breakdown.sentimentMismatchCount * 25)}%`;
+
+    // 7. Authentic Pros & Cons
+    const prosList = document.getElementById('dash-pros');
+    const consList = document.getElementById('dash-cons');
+    prosList.innerHTML = '';
+    consList.innerHTML = '';
+
+    (data.authenticHighlights?.pros || []).forEach(p => {
+      const li = document.createElement('li');
+      li.textContent = p;
+      prosList.appendChild(li);
+    });
+
+    (data.authenticHighlights?.cons || []).forEach(c => {
+      const li = document.createElement('li');
+      li.textContent = c;
+      consList.appendChild(li);
+    });
+
+    // 8. Review feed counts and rendering
+    const reviews = data.reviews || [];
+    const flagged = reviews.filter(r => r.isFlagged);
+    const authentic = reviews.filter(r => !r.isFlagged);
+
+    document.getElementById('dash-cnt-all').textContent = reviews.length;
+    document.getElementById('dash-cnt-flagged').textContent = flagged.length;
+    document.getElementById('dash-cnt-authentic').textContent = authentic.length;
+
+    renderReviewList(reviews, activeFilter);
+  }
+
+  function renderReviewList(reviews, filter) {
+    const container = document.getElementById('dash-review-list');
+    container.innerHTML = '';
+
+    let filtered = reviews;
+    if (filter === 'flagged') filtered = reviews.filter(r => r.isFlagged);
+    if (filter === 'authentic') filtered = reviews.filter(r => !r.isFlagged);
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<p style="text-align:center; padding: 24px; color: var(--text-muted);">No reviews in this category.</p>';
+      return;
+    }
+
+    filtered.forEach(rev => {
+      const div = document.createElement('div');
+      div.className = `rev-item ${rev.isFlagged ? 'flagged' : 'authentic'}`;
+      const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
+      const tagText = rev.isFlagged ? 'Flagged Deceptive' : 'Verified Authentic';
+      const tagClass = rev.isFlagged ? 'flag' : 'ok';
+
+      div.innerHTML = `
+        <div class="rev-top">
+          <div>
+            <span class="rev-author">${rev.author} ${rev.isVerifiedPurchase ? '✓ <span style="font-size:10px; color:#34d399;">Verified Purchase</span>' : ''}</span>
+            <span class="rev-date" style="font-size:11px; color:var(--text-muted); margin-left:8px;">${rev.date || ''}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="rev-stars">${stars}</span>
+            <span class="rev-tag ${tagClass}">${tagText}</span>
+          </div>
+        </div>
+        ${rev.title ? `<strong style="display:block; margin: 4px 0 2px 0; font-size:13px; color:#e2e8f0;">${rev.title}</strong>` : ''}
+        <p class="rev-body">${rev.text}</p>
+        ${rev.flaggedReasons && rev.flaggedReasons.length > 0 ? `
+          <div class="rev-flags">
+            ⚠️ Flags: ${rev.flaggedReasons.join(' • ')}
+          </div>
+        ` : ''}
+      `;
+      container.appendChild(div);
+    });
+  }
+});

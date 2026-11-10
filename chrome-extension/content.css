@@ -1,0 +1,138 @@
+/* Rivue On-Page Trust Badge Styles */
+.rivue-trust-badge-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #1e1e2f 0%, #11111b 100%);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 9999px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  vertical-align: middle;
+  z-index: 9999;
+}
+
+.rivue-trust-badge-container:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+  border-color: #6366f1;
+}
+
+.rivue-badge-icon {
+  font-size: 14px;
+}
+
+.rivue-badge-brand {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #818cf8;
+}
+
+.rivue-badge-score {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.rivue-badge-stars {
+  color: #fbbf24;
+  margin-left: 2px;
+}
+
+.rivue-badge-delta {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.rivue-badge-delta.negative {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.rivue-badge-delta.positive {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.rivue-badge-tag {
+  font-size: 11px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.rivue-badge-action {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-left: 4px;
+}
+
+.rivue-trust-badge-loading {
+  font-size: 12px;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rivue-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  border-top-color: #818cf8;
+  border-radius: 50%;
+  animation: rivue-spin 0.8s linear infinite;
+}
+
+@keyframes rivue-spin {
+  to { transform: rotate(360deg); }
+}
+
+.rivue-badge-worth {
+  font-size: 11px;
+  color: #c7d2fe;
+  background: rgba(99, 102, 241, 0.2);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+}
+
+.rivue-badge-worth strong {
+  color: #ffffff;
+}
+
+.rivue-badge-deal {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.rivue-badge-deal.great-deal {
+  background: rgba(16, 185, 129, 0.25);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.rivue-badge-deal.fair-price {
+  background: rgba(59, 130, 246, 0.25);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.rivue-badge-deal.overpriced {
+  background: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+

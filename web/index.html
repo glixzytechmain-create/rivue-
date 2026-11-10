@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rivue — Authentic Review & Trust Intelligence Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+  <!-- Hero & Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <span class="shield-logo">🛡️</span>
+        <span class="brand-text">Rivue</span>
+        <span class="badge-pill">Powered by Anakin.io</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#analyzer">Live Analyzer</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="downloads/Rivue-v1.0.apk" class="nav-download-pill apk-pill" download>📱 Download APK</a>
+        <a href="downloads/Rivue-Chrome-Extension.zip" class="nav-download-pill ext-pill" download>🧩 Chrome Extension</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Hero Banner -->
+    <section class="hero-section">
+      <h1 class="hero-title">Stop getting tricked by <span class="gradient-text">fake product reviews</span>.</h1>
+      <p class="hero-desc">
+        Rivue crawls multi-source marketplace reviews via Anakin.io, detects bot farm copypastas, unverified 5-star velocity bursts, and calculates the true, tamper-free product rating.
+      </p>
+
+      <!-- Interactive Input -->
+      <div class="analyzer-box" id="analyzer">
+        <div class="input-row">
+          <input type="url" id="product-url" placeholder="Paste Amazon, Flipkart, Walmart or Best Buy product URL..." value="https://www.amazon.com/dp/B09V3K4XYZ" />
+          <button id="btn-run-analysis" class="btn-analyze">Inspect Reviews ➔</button>
+        </div>
+
+        <div class="samples-row">
+          <span class="sample-label">Quick Test Real Products:</span>
+          <button class="sample-btn active" data-url="https://www.amazon.com/dp/B0D1XD1ZV3">AirPods Pro 2 (Amazon)</button>
+          <button class="sample-btn" data-url="https://www.amazon.com/dp/B08N5KWB9H">MacBook Air M1 (Amazon)</button>
+          <button class="sample-btn" data-url="https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm6ac6485515ae4">iPhone 15 (Flipkart)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading Indicator -->
+    <div id="loading-overlay" class="state-box hidden">
+      <div class="spinner"></div>
+      <h3>Extracting & Analyzing Multi-Source Reviews</h3>
+      <p>Anakin.io is crawling marketplace reviews, evaluating bot patterns, and computing the authentic rating...</p>
+    </div>
+
+    <!-- Live Analysis Dashboard -->
+    <section id="results-dashboard" class="dashboard-section">
+      <!-- Product Card -->
+      <div class="card product-summary-card">
+        <div class="product-card-body">
+          <div class="product-image-wrap">
+            <img id="dash-img" class="product-thumb" src="https://images-na.ssl-images-amazon.com/images/P/B0D1XD1ZV3.01._SX500_.jpg" alt="Product Photo" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'" />
+          </div>
+          <div class="product-details-wrap">
+            <div class="ps-header">
+              <span id="dash-marketplace" class="marketplace-pill">AMAZON</span>
+              <span id="dash-source" class="source-tag">Live Engine Verified</span>
+            </div>
+            <h2 id="dash-title" class="product-name">Apple AirPods Pro 2 Wireless Earbuds</h2>
+            <div class="ps-meta">
+              <span id="dash-price" class="price-tag">$199.00</span>
+              <span class="dot">•</span>
+              <span id="dash-total-reviews">47,092 Total Reviews Analyzed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating Comparison Hero -->
+      <div class="card rating-hero-card">
+        <div class="verdict-header">
+          <div>
+            <span class="eyebrow">RIVUE AUTHENTICITY VERDICT</span>
+            <h3 id="dash-verdict" class="verdict-title high-risk">High Risk</h3>
+          </div>
+          <div id="dash-grade" class="grade-badge grade-F">F</div>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comp-box">
+            <span class="lbl">Original Marketplace Rating</span>
+            <div class="stars-val"><span id="dash-orig-rating">4.8</span>★</div>
+            <span class="sub">Published on Store</span>
+          </div>
+
+          <div class="comp-arrow">
+            <span class="arrow-sym">➔</span>
+            <div id="dash-delta-badge" class="delta-badge negative">-2.1★</div>
+          </div>
+
+          <div class="comp-box highlight">
+            <span class="lbl">Rivue Adjusted Rating</span>
+            <div class="stars-val accent"><span id="dash-rivue-rating">2.7</span>★</div>
+            <span class="sub">Authentic Consensus</span>
+          </div>
+        </div>
+
+        <!-- Trust Meter -->
+        <div class="trust-index-box">
+          <div class="ti-labels">
+            <span>Rivue Authenticity Trust Index</span>
+            <strong id="dash-trust-val">25 / 100</strong>
+          </div>
+          <div class="meter-track">
+            <div id="dash-meter-fill" class="meter-fill" style="width: 25%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Price & Value Intelligence Card -->
+      <div class="card price-intelligence-card" id="price-intel-card">
+        <div class="card-header price-header-row">
+          <div class="price-header-left">
+            <span class="icon">🏷️</span>
+            <div>
+              <h3>Price & Value Intelligence</h3>
+              <span class="sub-header-desc">Historical tracking and fair-value assessment based on verified reviews</span>
+            </div>
+          </div>
+          <div id="price-deal-badge" class="deal-pill badge-deal-fair">Fair Value</div>
+        </div>
+
+        <div class="price-metrics-grid">
+          <div class="price-metric-box">
+            <span class="pm-label">Current Asking Price</span>
+            <div class="pm-value" id="price-current">$39.99</div>
+            <span class="pm-sub" id="price-store-lbl">Marketplace Listing</span>
+          </div>
+
+          <div class="price-metric-box">
+            <span class="pm-label">90-Day Average Price</span>
+            <div class="pm-value neutral" id="price-average">$44.50</div>
+            <span class="pm-sub">Historical Baseline</span>
+          </div>
+
+          <div class="price-metric-box worth-it-box">
+            <span class="pm-label">Rivue "Worth It" Price</span>
+            <div class="pm-value accent" id="price-worth-it">$32.00</div>
+            <span class="pm-sub" id="price-worth-sub">Fair Value Consensus</span>
+          </div>
+        </div>
+
+        <!-- Range Bar -->
+        <div class="price-range-container">
+          <div class="range-labels">
+            <span>90-Day Low: <strong id="price-lowest">$29.99</strong></span>
+            <span id="price-diff-summary" class="price-diff-tag">Marked up +$7.99</span>
+            <span>90-Day High: <strong id="price-highest">$49.99</strong></span>
+          </div>
+          <div class="range-bar-track">
+            <div id="range-fill-bar" class="range-fill-bar" style="left: 20%; width: 45%;"></div>
+            <div id="range-current-pin" class="range-pin current-pin" style="left: 65%;" title="Current Price"></div>
+            <div id="range-worth-pin" class="range-pin worth-pin" style="left: 35%;" title="Worth It Price"></div>
+          </div>
+          <div class="range-pin-legend">
+            <span><span class="dot dot-worth"></span> Worth It Price</span>
+            <span><span class="dot dot-current"></span> Current Price</span>
+          </div>
+        </div>
+
+        <!-- Deal Explanation -->
+        <div class="deal-explanation-box">
+          <p id="price-deal-explanation">
+            Priced at $39.99, this item is marked up beyond its fair value of $32.00. Artificial 5-star reviews have inflated asking prices above real product performance.
+          </p>
+        </div>
+
+        <!-- 90-Day Price History Timeline -->
+        <div class="price-history-section">
+          <h4>90-Day Price History</h4>
+          <div class="history-timeline" id="price-history-timeline">
+            <!-- Points injected dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Why it Differs Rationale Card -->
+      <div class="card rationale-card">
+        <div class="card-header">
+          <span class="icon">🔍</span>
+          <h3>Why Rivue's Rating Differs from Store</h3>
+        </div>
+        <p id="dash-explanation" class="explanation-text">
+          The official marketplace rating is 4.8★, but Rivue adjusted it to 2.7★ (-2.1★). We identified that 60% of reviews showed signs of manipulation—including unverified 5-star bursts, duplicate accounts, and automated praise templates.
+        </p>
+        <ul id="dash-reasons" class="reasons-list">
+          <!-- Injected dynamically -->
+        </ul>
+      </div>
+
+      <!-- Threat & Deception Breakdown -->
+      <div class="card analytics-card">
+        <div class="card-header">
+          <span class="icon">📊</span>
+          <h3>Threat & Deception Breakdown</h3>
+        </div>
+
+        <div class="breakdown-grid">
+          <div class="metric-item">
+            <div class="metric-label">
+              <span>Duplicate / Bot Phrasing</span>
+              <strong id="dash-bd-dup">50%</strong>
+            </div>
+            <div class="mini-bar"><div id="dash-bar-dup" class="mini-fill danger" style="width: 50%;"></div></div>
+          </div>
+
+          <div class="metric-item">
+            <div class="metric-label">
+              <span>Unverified Purchase Ratio</span>
+              <strong id="dash-bd-unverified">60%</strong>
+            </div>
+            <div class="mini-bar"><div id="dash-bar-unverified" class="mini-fill warning" style="width: 60%;"></div></div>
+          </div>
+
+          <div class="metric-item">
+            <div class="metric-label">
+              <span>Rating Velocity Spikes</span>
+              <strong id="dash-bd-velocity">High Risk</strong>
+            </div>
+            <div class="mini-bar"><div id="dash-bar-velocity" class="mini-fill danger" style="width: 90%;"></div></div>
+          </div>
+
+          <div class="metric-item">
+            <div class="metric-label">
+              <span>Sentiment Contradictions</span>
+              <strong id="dash-bd-sentiment">0 Flags</strong>
+            </div>
+            <div class="mini-bar"><div id="dash-bar-sentiment" class="mini-fill success" style="width: 15%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authentic Highlights (Pros & Cons) -->
+      <div class="card consensus-card">
+        <div class="card-header">
+          <span class="icon">⭐</span>
+          <h3>Verified Buyer Consensus</h3>
+        </div>
+        <p class="card-sub">Extracted solely from verified buyers with organic purchase histories.</p>
+
+        <div class="pros-cons-container">
+          <div class="pro-column">
+            <span class="pc-badge pro">✓ Genuine Pros</span>
+            <ul id="dash-pros"></ul>
+          </div>
+          <div class="con-column">
+            <span class="pc-badge con">✕ Genuine Cons</span>
+            <ul id="dash-cons"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Feed -->
+      <div class="card feed-card">
+        <div class="feed-header">
+          <h3>Individual Review Forensics</h3>
+          <div class="feed-tabs">
+            <button class="ftab active" data-filter="all">All Reviews (<span id="dash-cnt-all">0</span>)</button>
+            <button class="ftab" data-filter="flagged">Flagged Suspicious (<span id="dash-cnt-flagged">0</span>)</button>
+            <button class="ftab" data-filter="authentic">Verified Authentic (<span id="dash-cnt-authentic">0</span>)</button>
+          </div>
+        </div>
+        <div id="dash-review-list" class="reviews-container"></div>
+      </div>
+    </section>
+
+    <!-- Platform Guide Sections -->
+    <section class="platforms-section" id="how-it-works">
+      <h2>Experience Rivue Everywhere You Shop</h2>
+      <div class="platforms-grid">
+        <!-- Chrome Extension Card -->
+        <div class="platform-card" id="extension">
+          <div class="platform-icon">🌐</div>
+          <h3>Chrome Extension</h3>
+          <p>Browsing Amazon, Flipkart, or Walmart on desktop? Rivue automatically detects product pages, injects trust badges right next to the store's rating, and opens a full side panel inspector on demand.</p>
+          <div class="platform-actions">
+            <a href="downloads/Rivue-Chrome-Extension.zip" class="btn-download-action" download>⬇️ Download Extension (.zip)</a>
+          </div>
+          <div class="code-block">
+            <code>1. Unzip Rivue-Chrome-Extension.zip<br>2. Open chrome://extensions & toggle "Developer mode"<br>3. Click "Load unpacked" & select unzipped folder</code>
+          </div>
+        </div>
+
+        <!-- Android App Card -->
+        <div class="platform-card" id="android">
+          <div class="platform-icon">📱</div>
+          <h3>Android App with Share Sheet</h3>
+          <p>Browsing in the Amazon or Flipkart app on your phone? Simply tap <strong>Share ➔ Rivue</strong>. The app automatically catches the shared link, analyzes review authenticity, and shows the adjusted rating!</p>
+          <div class="platform-actions">
+            <a href="downloads/Rivue-v1.0.apk" class="btn-download-action primary" download>⬇️ Download Android APK (18 MB)</a>
+          </div>
+          <div class="code-block">
+            <code>Instant APK install for Android 8.0+<br>Native Jetpack Compose with System Share Sheet receiver</code>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <span>🛡️ Rivue — Transparent Fake Review Detection</span>
+      <span>Powered by Anakin.io Scraper Infrastructure</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

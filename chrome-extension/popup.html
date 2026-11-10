@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rivue - Review Authenticity</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="rivue-popup-container">
+    <!-- Header -->
+    <header class="rivue-header">
+      <div class="rivue-logo-row">
+        <div class="rivue-brand-badge">
+          <span class="shield-icon">🛡️</span>
+          <span class="brand-name">Rivue</span>
+        </div>
+        <span class="status-indicator live">
+          <span class="dot"></span> Anakin.io Active
+        </span>
+      </div>
+      <p class="tagline">Fake & Deceptive Review Detector</p>
+    </header>
+
+    <!-- Scan Bar -->
+    <div class="scan-section">
+      <button id="btn-scan-current" class="btn-primary">
+        <span class="btn-icon">⚡</span> Scan Current Page
+      </button>
+
+      <div class="divider">
+        <span>OR PASTE PRODUCT LINK</span>
+      </div>
+
+      <div class="input-group">
+        <input type="url" id="input-url" placeholder="Paste Amazon, Flipkart or Walmart URL..." />
+        <button id="btn-analyze" class="btn-submit">➔</button>
+      </div>
+
+      <!-- Quick sample pills -->
+      <div class="quick-samples">
+        <span class="quick-label">Try sample:</span>
+        <button class="pill" data-type="amazon-earbuds">Amazon Earbuds (Manipulated)</button>
+        <button class="pill" data-type="flipkart-smartwatch">Flipkart Watch</button>
+        <button class="pill" data-type="walmart-chair">Walmart Chair (Genuine)</button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="state-card hidden">
+      <div class="loader-spinner"></div>
+      <h4>Scraping & Analyzing Reviews</h4>
+      <p>Collecting multi-source feedback via Anakin.io, checking duplicates, and recalculating authentic ratings...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="state-card error-card hidden">
+      <span class="error-icon">⚠️</span>
+      <p id="error-message">Unable to inspect reviews.</p>
+    </div>
+
+    <!-- Result Card -->
+    <div id="result-state" class="state-card result-card hidden">
+      <div class="product-banner">
+        <img id="res-img" class="popup-thumb" src="" alt="Product Photo" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'" />
+        <div class="product-info">
+          <span id="res-marketplace" class="badge-tag">AMAZON</span>
+          <h4 id="res-title" class="product-title">Product Title</h4>
+        </div>
+      </div>
+
+      <div class="score-comparison-grid">
+        <div class="score-box original">
+          <span class="box-label">Original Rating</span>
+          <div class="score-val"><span id="res-original-rating">4.8</span>★</div>
+          <span class="box-sub"><span id="res-total-reviews">2,450</span> reviews</span>
+        </div>
+        <div class="delta-arrow" id="res-delta-arrow">➔</div>
+        <div class="score-box adjusted">
+          <span class="box-label">Rivue Trust Rating</span>
+          <div class="score-val highlight"><span id="res-rivue-rating">2.7</span>★</div>
+          <span id="res-delta-badge" class="delta-badge">-2.1★</span>
+        </div>
+      </div>
+
+      <div class="trust-meter-row">
+        <div class="trust-info">
+          <span class="meter-label">Authenticity Trust Index</span>
+          <span id="res-verdict" class="verdict-tag high-risk">High Risk</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="res-trust-bar" class="progress-bar-fill" style="width: 25%;"></div>
+        </div>
+        <div class="meter-stats">
+          <span>Trust Score: <strong id="res-trust-score">25%</strong></span>
+          <span>Fake Reviews: <strong id="res-fake-pct">60%</strong></span>
+        </div>
+      </div>
+
+      <!-- Price & Worth-It Summary -->
+      <div id="res-price-box" class="price-summary-box">
+        <div class="price-pill-row">
+          <div class="price-item">
+            <span class="pi-label">Current</span>
+            <strong id="res-price-current">$39.99</strong>
+          </div>
+          <div class="price-item">
+            <span class="pi-label">90D Avg</span>
+            <span id="res-price-avg" class="pi-avg">$44.50</span>
+          </div>
+          <div class="price-item worth">
+            <span class="pi-label">Worth It</span>
+            <strong id="res-price-worth" class="pi-worth">$32.00</strong>
+          </div>
+        </div>
+        <div class="price-verdict-row">
+          <span id="res-deal-badge" class="deal-pill badge-deal-fair">Fair Value</span>
+          <span id="res-price-diff-tag" class="deal-mini-text">Market match</span>
+        </div>
+      </div>
+
+      <div class="explanation-box">
+        <span class="exp-title">Why this rating differs:</span>
+        <p id="res-explanation">60% of positive reviews showed copy-paste templates and unverified velocity bursts.</p>
+      </div>
+
+      <button id="btn-open-sidepanel" class="btn-sidepanel">
+        Inspect Complete Report in Side Panel ➔
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="rivue-footer">
+      <span>Rivue v1.0 • Powered by Anakin.io</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
