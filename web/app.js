@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const sampleBtns = document.querySelectorAll('.sample-btn');
   const loadingOverlay = document.getElementById('loading-overlay');
   const resultsDashboard = document.getElementById('results-dashboard');
+  const errorBanner = document.getElementById('error-banner');
+  const errorBannerText = document.getElementById('error-banner-text');
   const ftabs = document.querySelectorAll('.ftab');
 
   let currentAnalysis = null;
@@ -106,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function runAnalysis(url) {
+    if (errorBanner) errorBanner.classList.add('hidden');
     loadingOverlay.classList.remove('hidden');
     resultsDashboard.style.opacity = '0.15';
     resultsDashboard.style.pointerEvents = 'none';
@@ -118,7 +121,10 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, refresh: true })
     }).then(async res => {
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || errJson.details || `Server responded with HTTP ${res.status}`);
+      }
       return res.json();
     });
 
@@ -129,7 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
       renderDashboard(data);
     } catch (err) {
       console.error(err);
-      alert('Could not inspect product reviews: ' + err.message);
+      if (errorBanner && errorBannerText) {
+        errorBannerText.textContent = err.message;
+        errorBanner.classList.remove('hidden');
+      } else {
+        alert(err.message);
+      }
     } finally {
       setTimeout(() => {
         loadingOverlay.classList.add('hidden');

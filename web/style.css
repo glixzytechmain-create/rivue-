@@ -186,6 +186,33 @@ body {
   background: linear-gradient(135deg, var(--primary-hover) 0%, #3730a3 100%);
 }
 
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  color: #fca5a5;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+  line-height: 1.5;
+  animation: shake 0.3s ease-in-out;
+}
+
+.error-banner .error-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
 .samples-row {
   display: flex;
   flex-wrap: wrap;

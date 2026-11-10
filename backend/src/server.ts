@@ -110,9 +110,9 @@ app.post('/api/analyze', async (req: Request, res: Response) => {
 
     return res.json(analysis);
   } catch (err: any) {
-    console.error('[Rivue Error]', err);
-    return res.status(500).json({
-      error: 'Failed to analyze product reviews.',
+    console.error('[Rivue Error]', err.message);
+    return res.status(400).json({
+      error: err.message || 'Failed to inspect product reviews.',
       details: err.message
     });
   }

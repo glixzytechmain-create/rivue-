@@ -58,6 +58,15 @@ object RivueApiClient {
           val response = BufferedReader(InputStreamReader(conn.inputStream)).use { it.readText() }
           val parsed = parseJsonResponse(response)
           return@withContext Result.success(parsed)
+        } else if (conn.responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
+          val errStream = conn.errorStream ?: conn.inputStream
+          val errResponse = BufferedReader(InputStreamReader(errStream)).use { it.readText() }
+          val msg = try {
+            JSONObject(errResponse).optString("error", "Invalid product listing URL.")
+          } catch (e: Exception) {
+            "Invalid product URL."
+          }
+          return@withContext Result.failure(Exception(msg))
         }
       } catch (e: Exception) {
         // Fallback to direct ScraperAPI call if backend is not running on localhost
@@ -70,9 +79,8 @@ object RivueApiClient {
       return@withContext Result.success(directResult)
     }
 
-    // 3. Fallback
-    val fallbackResult = generateLocalAnalysis(targetUrl)
-    Result.success(fallbackResult)
+    // 3. Strict Failure: Do NOT invent fake dummy data
+    Result.failure(Exception("Product Not Found: Unable to verify an active product listing at \"$targetUrl\". Please check the URL and make sure it is a valid Amazon or Flipkart link."))
   }
 
   private fun extractAmazonAsin(url: String): String? {

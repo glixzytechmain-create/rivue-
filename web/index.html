@@ -14,7 +14,7 @@
       <div class="brand">
         <span class="shield-logo">🛡️</span>
         <span class="brand-text">Rivue</span>
-        <span class="badge-pill">Powered by Anakin.io</span>
+        <span class="badge-pill">Powered by ScraperAPI & AI</span>
       </div>
       <nav class="nav-links">
         <a href="#analyzer">Live Analyzer</a>
@@ -30,7 +30,7 @@
     <section class="hero-section">
       <h1 class="hero-title">Stop getting tricked by <span class="gradient-text">fake product reviews</span>.</h1>
       <p class="hero-desc">
-        Rivue crawls multi-source marketplace reviews via Anakin.io, detects bot farm copypastas, unverified 5-star velocity bursts, and calculates the true, tamper-free product rating.
+        Rivue inspects live marketplace product listings via ScraperAPI, detects bot farm copypastas, unverified 5-star velocity bursts, and calculates the true, tamper-free product rating.
       </p>
 
       <!-- Interactive Input -->
@@ -38,6 +38,11 @@
         <div class="input-row">
           <input type="url" id="product-url" placeholder="Paste Amazon, Flipkart, Walmart or Best Buy product URL..." value="https://www.amazon.com/dp/B0D1XD1ZV3" />
           <button id="btn-run-analysis" class="btn-analyze">Inspect Reviews ➔</button>
+        </div>
+
+        <div id="error-banner" class="error-banner hidden">
+          <span class="error-icon">⚠️</span>
+          <span id="error-banner-text">Error message</span>
         </div>
 
         <div class="samples-row">
@@ -361,7 +366,7 @@
   <footer class="footer">
     <div class="footer-container">
       <span>🛡️ Rivue — Transparent Fake Review Detection</span>
-      <span>Powered by Anakin.io Scraper Infrastructure</span>
+      <span>Powered by ScraperAPI & Rivue Forensics Engine</span>
     </div>
   </footer>
 
