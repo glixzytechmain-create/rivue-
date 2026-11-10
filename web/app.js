@@ -177,10 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (imgEl && data.product.imageUrl) {
       imgEl.src = data.product.imageUrl;
     }
-    document.getElementById('dash-marketplace').textContent = (data.product.marketplace || 'STORE').toUpperCase();
+    const isGeneric = (data.product.marketplace || '').toLowerCase() === 'generic';
+    document.getElementById('dash-marketplace').textContent = isGeneric ? 'WEB RESOURCE' : (data.product.marketplace || 'STORE').toUpperCase();
     document.getElementById('dash-title').textContent = data.product.title;
-    document.getElementById('dash-price').textContent = data.product.price || '$39.99';
-    document.getElementById('dash-total-reviews').textContent = `${(data.product.originalReviewCount || 0).toLocaleString()} Total Reviews Analyzed`;
+    document.getElementById('dash-price').textContent = data.product.price || 'Free / Web Resource';
+    document.getElementById('dash-total-reviews').textContent = isGeneric
+      ? `${(data.totalReviewsAnalyzed || data.reviews.length)} Security & Trust Audits Verified`
+      : `${(data.product.originalReviewCount || 0).toLocaleString()} Total Reviews Analyzed`;
 
     // 2. Verdict & Grade
     const verdictEl = document.getElementById('dash-verdict');

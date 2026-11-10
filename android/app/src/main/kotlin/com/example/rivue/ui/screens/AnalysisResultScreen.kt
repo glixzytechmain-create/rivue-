@@ -79,7 +79,7 @@ fun AnalysisResultScreen(
             )
             Column(modifier = Modifier.weight(1f)) {
               Text(
-                  text = result.product.marketplace.uppercase(),
+                  text = if (result.product.marketplace.equals("generic", ignoreCase = true)) "WEB RESOURCE" else result.product.marketplace.uppercase(),
                   style = MaterialTheme.typography.labelMedium,
                   color = MaterialTheme.colorScheme.primary,
                   fontWeight = FontWeight.Bold
@@ -96,7 +96,7 @@ fun AnalysisResultScreen(
                   Text("•", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Text(
-                    text = "${result.product.originalReviewCount} Reviews",
+                    text = if (result.product.marketplace.equals("generic", ignoreCase = true)) "${result.totalReviewsAnalyzed} Security Audits" else "${result.product.originalReviewCount} Reviews",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -75,6 +75,27 @@ export function computePriceIntelligence(
   fakeReviewPercentage: number,
   seedKey: string = 'product'
 ): PriceAnalysis {
+  if (rawPrice && (rawPrice.includes('Free') || rawPrice.includes('Web Resource') || rawPrice.includes('Resource'))) {
+    return {
+      currentPrice: 0,
+      averagePrice: 0,
+      lowestPrice: 0,
+      highestPrice: 0,
+      currency: '',
+      worthItPrice: 0,
+      dealVerdict: 'FAIR_PRICE',
+      dealBadge: 'Verified Resource',
+      dealExplanation: 'This is a web resource or open-access service. No commercial product purchase markup detected.',
+      priceDifference: 0,
+      formattedCurrentPrice: 'Free / Web Resource',
+      formattedAveragePrice: 'Free / Web Resource',
+      formattedWorthItPrice: 'Free / Web Resource',
+      formattedLowestPrice: 'Free / Web Resource',
+      formattedHighestPrice: 'Free / Web Resource',
+      history: []
+    };
+  }
+
   const { amount: currentPrice, currency } = parseRawPrice(rawPrice);
   const seed = getProductSeed(seedKey);
 
