@@ -12,12 +12,148 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentAnalysis = null;
   let activeFilter = 'all';
 
-  const btnPaste = document.getElementById('btn-paste-url');
+  // --- Backend Server Connection Management ---
+  const DEFAULT_REMOTE_IP = '10.178.253.57';
+  const serverPill = document.getElementById('btn-server-settings');
+  const serverStatusDot = document.getElementById('server-status-dot');
+  const serverStatusText = document.getElementById('server-status-text');
+  const serverModal = document.getElementById('server-modal');
+  const btnCloseServerModal = document.getElementById('btn-close-server-modal');
+  const serverUrlInput = document.getElementById('server-url-input');
+  const btnTestServer = document.getElementById('btn-test-server');
+  const btnSaveServer = document.getElementById('btn-save-server');
+  const serverTestResult = document.getElementById('server-test-result');
+  const presetChips = document.querySelectorAll('.preset-chip');
 
+  function getSavedServerUrl() {
+    return localStorage.getItem('rivue_server_url') || '';
+  }
+
+  function getApiBaseUrl() {
+    const saved = getSavedServerUrl();
+    if (saved) return saved.replace(/\/$/, '');
+
+    const isCapacitor = window.Capacitor || window.location.protocol === 'capacitor:' || window.location.protocol === 'file:';
+    const isMobileHost = window.location.hostname === 'localhost' && window.location.port !== '3001';
+
+    if (isCapacitor || isMobileHost) {
+      return `http://${DEFAULT_REMOTE_IP}:3001`;
+    }
+
+    return '';
+  }
+
+  async function checkServerHealth(targetBaseUrl = getApiBaseUrl()) {
+    if (serverStatusDot) serverStatusDot.className = 'server-indicator connecting';
+    if (serverStatusText) serverStatusText.textContent = 'Connecting...';
+    try {
+      const url = targetBaseUrl ? `${targetBaseUrl}/api/health` : '/api/health';
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        if (serverStatusDot) serverStatusDot.className = 'server-indicator online';
+        if (serverStatusText) serverStatusText.textContent = 'Online';
+        return true;
+      }
+    } catch (e) {
+      console.warn('Server health check failed for:', targetBaseUrl, e);
+    }
+    if (serverStatusDot) serverStatusDot.className = 'server-indicator offline';
+    if (serverStatusText) serverStatusText.textContent = 'Offline';
+    return false;
+  }
+
+  // Initialize server modal & initial health ping
+  if (serverUrlInput) {
+    serverUrlInput.value = getSavedServerUrl() || getApiBaseUrl();
+  }
+
+  if (serverPill) {
+    serverPill.addEventListener('click', () => {
+      serverUrlInput.value = getSavedServerUrl() || getApiBaseUrl();
+      if (serverTestResult) serverTestResult.classList.add('hidden');
+      serverModal.classList.remove('hidden');
+    });
+  }
+
+  if (btnCloseServerModal) {
+    btnCloseServerModal.addEventListener('click', () => {
+      serverModal.classList.add('hidden');
+    });
+  }
+
+  presetChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const url = chip.getAttribute('data-url');
+      if (url && serverUrlInput) {
+        serverUrlInput.value = url;
+        btnTestServer.click();
+      }
+    });
+  });
+
+  if (btnTestServer) {
+    btnTestServer.addEventListener('click', async () => {
+      const target = (serverUrlInput.value || '').trim().replace(/\/$/, '');
+      if (serverTestResult) {
+        serverTestResult.className = 'test-result-box';
+        serverTestResult.textContent = 'Pinging server...';
+        serverTestResult.classList.remove('hidden');
+      }
+      const isHealthy = await checkServerHealth(target);
+      if (serverTestResult) {
+        if (isHealthy) {
+          serverTestResult.className = 'test-result-box success';
+          serverTestResult.textContent = '✓ Connected! Rivue API Engine is online & responding.';
+        } else {
+          serverTestResult.className = 'test-result-box error';
+          serverTestResult.textContent = `✕ Unreachable at ${target || 'local endpoint'}. Ensure backend server is running.`;
+        }
+      }
+    });
+  }
+
+  if (btnSaveServer) {
+    btnSaveServer.addEventListener('click', async () => {
+      const target = (serverUrlInput.value || '').trim().replace(/\/$/, '');
+      if (target) {
+        localStorage.setItem('rivue_server_url', target);
+      } else {
+        localStorage.removeItem('rivue_server_url');
+      }
+      serverModal.classList.add('hidden');
+      await checkServerHealth();
+    });
+  }
+
+  // Run initial health check on load
+  checkServerHealth();
+
+  // --- Clipboard Integration (Capacitor & Web) ---
+  async function readClipboardText() {
+    try {
+      if (window.Capacitor?.Plugins?.Clipboard) {
+        const { value } = await window.Capacitor.Plugins.Clipboard.read();
+        if (value) return value;
+      }
+    } catch (e) {
+      console.warn('Capacitor clipboard plugin read error:', e);
+    }
+    if (navigator.clipboard?.readText) {
+      try {
+        return await navigator.clipboard.readText();
+      } catch (e) {}
+    }
+    return '';
+  }
+
+  const btnPaste = document.getElementById('btn-paste-url');
   if (btnPaste) {
     btnPaste.addEventListener('click', async () => {
       try {
-        const text = await navigator.clipboard.readText();
+        const text = await readClipboardText();
         if (text && text.trim().startsWith('http')) {
           inputUrl.value = text.trim();
           if (errorBanner) errorBanner.classList.add('hidden');
@@ -137,7 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start 5-second realistic scanning animation concurrently with live API scrape
     const animationPromise = run5SecondScanningAnimation();
 
-    const fetchPromise = fetch('/api/analyze', {
+    const baseUrl = getApiBaseUrl();
+    const fetchPromise = fetch(`${baseUrl}/api/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, refresh: true })
@@ -147,6 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(errJson.error || errJson.details || `Server responded with HTTP ${res.status}`);
       }
       return res.json();
+    }).catch(fetchErr => {
+      if (fetchErr.message && fetchErr.message.includes('Failed to fetch')) {
+        throw new Error(`Cannot reach backend server at ${baseUrl || 'local endpoint'}. Please tap "⚙️ Server" in the top bar to test or change server IP.`);
+      }
+      throw fetchErr;
     });
 
     try {

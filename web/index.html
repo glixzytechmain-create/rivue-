@@ -19,8 +19,12 @@
       <nav class="nav-links">
         <a href="#analyzer">Live Analyzer</a>
         <a href="#how-it-works">How It Works</a>
-        <a href="downloads/Rivue-v1.0.apk" class="nav-download-pill apk-pill" download>📱 Download APK</a>
+        <a href="downloads/rivue-latest.apk" class="nav-download-pill apk-pill" download>📱 Download APK</a>
         <a href="downloads/Rivue-Chrome-Extension.zip" class="nav-download-pill ext-pill" download>🧩 Chrome Extension</a>
+        <button id="btn-server-settings" class="server-pill" type="button" title="Configure Backend API Server">
+          <span class="server-indicator" id="server-status-dot"></span>
+          <span id="server-status-text">Server</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -370,6 +374,45 @@
       <span>Powered by ScraperAPI & Rivue Forensics Engine</span>
     </div>
   </footer>
+
+  <!-- Server Connection Settings Modal -->
+  <div id="server-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="modal-icon">⚙️</span>
+          <h3>Backend Server Connection</h3>
+        </div>
+        <button id="btn-close-server-modal" class="modal-close" type="button">✕</button>
+      </div>
+      <p class="modal-desc">
+        Configure the backend API server URL (running <code>node dist/server.js</code> on port 3001).
+      </p>
+
+      <div class="modal-form-group">
+        <label for="server-url-input">API Server Base URL:</label>
+        <div class="modal-input-row">
+          <input type="text" id="server-url-input" placeholder="http://10.178.253.57:3001" />
+        </div>
+      </div>
+
+      <div class="modal-presets">
+        <span class="presets-label">Quick Presets:</span>
+        <div class="preset-chips">
+          <button type="button" class="preset-chip" data-url="http://10.178.253.57:3001">💻 Mac Wi-Fi (10.178.253.57)</button>
+          <button type="button" class="preset-chip" data-url="http://10.0.2.2:3001">🤖 Emulator (10.0.2.2)</button>
+          <button type="button" class="preset-chip" data-url="http://localhost:3001">🌐 Localhost</button>
+        </div>
+      </div>
+
+      <div id="server-test-result" class="test-result-box hidden"></div>
+
+      <div class="modal-actions">
+        <button id="btn-test-server" class="btn-secondary" type="button">⚡ Test Connection</button>
+        <button id="btn-save-server" class="btn-primary" type="button">Save & Connect</button>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

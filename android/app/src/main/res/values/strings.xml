@@ -1,3 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">Rivue</string>
+    <string name="title_activity_main">Rivue</string>
+    <string name="package_name">io.rivue.app</string>
+    <string name="custom_url_scheme">io.rivue.app</string>
 </resources>

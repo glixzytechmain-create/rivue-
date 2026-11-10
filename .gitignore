@@ -21,7 +21,7 @@ android/local.properties
 build/
 *.iml
 .idea/
-captures/
+android-compose-backup/
 .externalNativeBuild/
 .cxx/
 

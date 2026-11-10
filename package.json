@@ -1,0 +1,19 @@
+{
+  "name": "fearless-hertz",
+  "version": "1.0.0",
+  "description": "**Rivue** is an intelligent, cross-platform product review integrity and fair-value valuation system that helps consumers identify fake, duplicate, paid, and misleading reviews across major e-commerce marketplaces (Amazon, Flipkart, Walmart, Best Buy, etc.).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^7.6.10",
+    "@capacitor/clipboard": "^8.0.1",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/status-bar": "^8.0.4"
+  }
+}

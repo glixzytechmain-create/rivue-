@@ -1,0 +1,13 @@
+{
+  "appId": "io.rivue.app",
+  "appName": "Rivue",
+  "webDir": "web",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
