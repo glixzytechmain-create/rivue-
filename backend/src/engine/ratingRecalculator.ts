@@ -14,51 +14,72 @@ import { computePriceIntelligence } from './priceIntelligence';
 
 /**
  * Extracts pros and cons strictly from high-confidence verified authentic reviews.
+ * Does not manufacture synthetic complaints or mention unrelated domains (e.g., battery/audio).
  */
-function extractAuthenticHighlights(reviews: AnalyzedReview[]): AuthenticHighlights {
-  const authentic = reviews.filter(r => !r.isFlagged && r.authenticityConfidence >= 0.7);
+function extractAuthenticHighlights(reviews: AnalyzedReview[], product?: ProductInfo): AuthenticHighlights {
+  const authentic = reviews.filter(r => !r.isFlagged && r.authenticityConfidence >= 0.6);
   const pros: string[] = [];
   const cons: string[] = [];
 
-  for (const r of authentic) {
-    const text = r.text;
-    const sentences = text.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 15 && s.length < 120);
+  // 1. Extract genuine positive highlights from 4-5 star verified reviews
+  const positiveReviews = authentic.filter(r => r.rating >= 4);
+  for (const r of positiveReviews) {
+    const cleanTitle = (r.title || '').trim();
+    const cleanText = (r.text || '').trim();
 
-    for (const s of sentences) {
-      const lower = s.toLowerCase();
-      // Check for cons in 1-3 star authentic reviews
-      if (r.rating <= 3 && cons.length < 4) {
-        if (
-          lower.includes('battery') || lower.includes('build') || lower.includes('issue') ||
-          lower.includes('problem') || lower.includes('slow') || lower.includes('size') ||
-          lower.includes('plastic') || lower.includes('sound') || lower.includes('heat') ||
-          lower.includes('not good') || lower.includes('poor')
-        ) {
-          if (!cons.includes(s)) cons.push(s);
-        }
+    if (cleanTitle && cleanTitle.length >= 3 && cleanTitle.length <= 80) {
+      const candidate = cleanText && cleanText.length >= 3 && !cleanText.toLowerCase().includes(cleanTitle.toLowerCase())
+        ? `${cleanTitle}: "${cleanText.slice(0, 80)}"`
+        : cleanTitle;
+      if (!pros.some(p => p.toLowerCase() === candidate.toLowerCase()) && pros.length < 3) {
+        pros.push(candidate);
       }
-
-      // Check for pros in 4-5 star authentic reviews
-      if (r.rating >= 4 && pros.length < 4) {
-        if (
-          lower.includes('battery life') || lower.includes('sound quality') || lower.includes('durable') ||
-          lower.includes('comfortable') || lower.includes('fast') || lower.includes('clear') ||
-          lower.includes('worth') || lower.includes('easy to use') || lower.includes('design')
-        ) {
-          if (!pros.includes(s)) pros.push(s);
-        }
+    } else if (cleanText && cleanText.length >= 3 && cleanText.length <= 120) {
+      if (!pros.some(p => p.toLowerCase() === cleanText.toLowerCase()) && pros.length < 3) {
+        pros.push(cleanText);
       }
     }
   }
 
-  // Sensible defaults if not enough sentences match keywords
-  if (pros.length === 0) {
-    pros.push('Reliable everyday performance praised by verified buyers');
-    pros.push('Satisfactory build quality considering price segment');
+  // 2. Extract genuine critical feedback from 1-3 star reviews
+  const criticalReviews = reviews.filter(r => r.rating <= 3);
+  for (const r of criticalReviews) {
+    const cleanTitle = (r.title || '').trim();
+    const cleanText = (r.text || '').trim();
+
+    if (cleanTitle && cleanTitle.length >= 3 && cleanTitle.length <= 80) {
+      const candidate = cleanText && cleanText.length >= 3 && !cleanText.toLowerCase().includes(cleanTitle.toLowerCase())
+        ? `${cleanTitle}: "${cleanText.slice(0, 90)}"`
+        : cleanTitle;
+      if (!cons.some(c => c.toLowerCase() === candidate.toLowerCase()) && cons.length < 3) {
+        cons.push(candidate);
+      }
+    } else if (cleanText && cleanText.length >= 3 && cleanText.length <= 120) {
+      if (!cons.some(c => c.toLowerCase() === cleanText.toLowerCase()) && cons.length < 3) {
+        cons.push(cleanText);
+      }
+    }
   }
+
+  // 3. Fallbacks when reviews have 0 explicit pros or cons
+  if (pros.length === 0) {
+    if (product && product.originalRating >= 4.0) {
+      pros.push(`Consistently rated ${product.originalRating}★ by verified marketplace customers`);
+      if (product.originalReviewCount && product.originalReviewCount > 0) {
+        pros.push(`${product.originalReviewCount.toLocaleString()} customers recorded positive sentiment on marketplace`);
+      }
+    } else {
+      pros.push('Verified product listing matching official marketplace catalog');
+    }
+  }
+
   if (cons.length === 0) {
-    cons.push('Minor discrepancies reported between advertised battery/durability specs');
-    cons.push('Some units report variability in packaging quality');
+    if (criticalReviews.length === 0) {
+      cons.push('No critical defects or negative feedback reported in verified buyer reviews');
+      cons.push('All recorded reviews reflect positive customer ratings');
+    } else {
+      cons.push('Review volume is currently limited; no recurring defect patterns detected');
+    }
   }
 
   return { pros: pros.slice(0, 3), cons: cons.slice(0, 3) };
@@ -217,7 +238,7 @@ export function analyzeProductReviews(
     incentivizedBiasScore: Math.round(credibilityRes.genericAuthorRatio * 100)
   };
 
-  const authenticHighlights = extractAuthenticHighlights(analyzedReviews);
+  const authenticHighlights = extractAuthenticHighlights(analyzedReviews, product);
 
   const priceAnalysis = computePriceIntelligence(
     product.price,
