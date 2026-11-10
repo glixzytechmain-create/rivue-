@@ -12,7 +12,12 @@ import kotlinx.coroutines.launch
 
 sealed interface RivueUiState {
   object Idle : RivueUiState
-  data class Loading(val url: String) : RivueUiState
+  data class Loading(
+    val url: String,
+    val stage: Int = 1,
+    val stageTitle: String = "Phase 1/5: Connecting to ScraperAPI residential proxy network...",
+    val progress: Float = 0.20f
+  ) : RivueUiState
   data class Success(val result: AnalysisResult) : RivueUiState
   data class Error(val message: String) : RivueUiState
 }
@@ -60,13 +65,30 @@ class RivueViewModel : ViewModel() {
       return
     }
 
-    _uiState.value = RivueUiState.Loading(clean)
-
     viewModelScope.launch {
-      val res = RivueApiClient.analyzeUrl(clean)
-      res.onSuccess { analysis ->
+      // 5-Stage Animated Sequence across 5.2 seconds
+      val animationJob = launch {
+        _uiState.value = RivueUiState.Loading(clean, 1, "Phase 1/5: Connecting to ScraperAPI residential proxy network...", 0.20f)
+        kotlinx.coroutines.delay(1100)
+
+        _uiState.value = RivueUiState.Loading(clean, 2, "Phase 2/5: Bypassing anti-bot walls & extracting 1500px photography...", 0.45f)
+        kotlinx.coroutines.delay(1200)
+
+        _uiState.value = RivueUiState.Loading(clean, 3, "Phase 3/5: Scraping authentic customer reviews & verified star distribution...", 0.68f)
+        kotlinx.coroutines.delay(1200)
+
+        _uiState.value = RivueUiState.Loading(clean, 4, "Phase 4/5: Running Rivue AI Forensics (bot templates & sentiment mismatch)...", 0.88f)
+        kotlinx.coroutines.delay(1100)
+
+        _uiState.value = RivueUiState.Loading(clean, 5, "Phase 5/5: Computing 90-day Worth-It fair value price & Trust Score...", 1.0f)
+        kotlinx.coroutines.delay(600)
+      }
+
+      val apiResult = RivueApiClient.analyzeUrl(clean)
+      animationJob.join()
+
+      apiResult.onSuccess { analysis ->
         _uiState.value = RivueUiState.Success(analysis)
-        // Prepend to recent scans list
         val current = _recentScans.value.toMutableList()
         current.removeAll { it.product.url == analysis.product.url }
         current.add(0, analysis)

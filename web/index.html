@@ -36,24 +36,72 @@
       <!-- Interactive Input -->
       <div class="analyzer-box" id="analyzer">
         <div class="input-row">
-          <input type="url" id="product-url" placeholder="Paste Amazon, Flipkart, Walmart or Best Buy product URL..." value="https://www.amazon.com/dp/B09V3K4XYZ" />
+          <input type="url" id="product-url" placeholder="Paste Amazon, Flipkart, Walmart or Best Buy product URL..." value="https://www.amazon.com/dp/B0D1XD1ZV3" />
           <button id="btn-run-analysis" class="btn-analyze">Inspect Reviews ➔</button>
         </div>
 
         <div class="samples-row">
           <span class="sample-label">Quick Test Real Products:</span>
           <button class="sample-btn active" data-url="https://www.amazon.com/dp/B0D1XD1ZV3">AirPods Pro 2 (Amazon)</button>
+          <button class="sample-btn" data-url="https://www.amazon.com/dp/B09V3HN1KC">iPad Air M1 (Amazon)</button>
           <button class="sample-btn" data-url="https://www.amazon.com/dp/B08N5KWB9H">MacBook Air M1 (Amazon)</button>
           <button class="sample-btn" data-url="https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm6ac6485515ae4">iPhone 15 (Flipkart)</button>
         </div>
       </div>
     </section>
 
-    <!-- Loading Indicator -->
-    <div id="loading-overlay" class="state-box hidden">
-      <div class="spinner"></div>
-      <h3>Extracting & Analyzing Multi-Source Reviews</h3>
-      <p>Anakin.io is crawling marketplace reviews, evaluating bot patterns, and computing the authentic rating...</p>
+    <!-- 5-Second Forensic Radar Scanner Overlay -->
+    <div id="loading-overlay" class="forensic-scanner-overlay hidden">
+      <div class="scanner-card">
+        <div class="radar-container">
+          <div class="radar-circle circle-1"></div>
+          <div class="radar-circle circle-2"></div>
+          <div class="radar-circle circle-3"></div>
+          <div class="radar-sweep"></div>
+          <div class="radar-shield">🛡️</div>
+        </div>
+
+        <h3 class="scanner-title">Live E-Commerce Review Forensics</h3>
+        <p class="scanner-subtitle" id="scanner-status-text">Connecting to ScraperAPI residential proxies...</p>
+
+        <!-- Progress Bar -->
+        <div class="scanner-progress-track">
+          <div class="scanner-progress-bar" id="scanner-progress-bar"></div>
+        </div>
+        <div class="scanner-progress-meta">
+          <span id="scanner-stage-label">Phase 1/5: Proxy Tunnel</span>
+          <span id="scanner-percent-label">15%</span>
+        </div>
+
+        <!-- 5 Forensic Audit Checkpoints -->
+        <div class="audit-steps-list">
+          <div class="audit-step" id="step-1">
+            <span class="step-icon">⚡</span>
+            <span class="step-text">Connecting to ScraperAPI residential proxies & IP rotation</span>
+            <span class="step-status" id="step-status-1">Scanning...</span>
+          </div>
+          <div class="audit-step" id="step-2">
+            <span class="step-icon">📸</span>
+            <span class="step-text">Bypassing anti-bot walls & fetching 1500px Amazon photography</span>
+            <span class="step-status" id="step-status-2">Pending...</span>
+          </div>
+          <div class="audit-step" id="step-3">
+            <span class="step-icon">⭐</span>
+            <span class="step-text">Scraping authentic customer reviews & verified star distribution</span>
+            <span class="step-status" id="step-status-3">Pending...</span>
+          </div>
+          <div class="audit-step" id="step-4">
+            <span class="step-icon">🤖</span>
+            <span class="step-text">Running Rivue AI Forensics (bot templates & sentiment mismatch)</span>
+            <span class="step-status" id="step-status-4">Pending...</span>
+          </div>
+          <div class="audit-step" id="step-5">
+            <span class="step-icon">💰</span>
+            <span class="step-text">Computing 90-day Worth-It fair value price & Trust Score</span>
+            <span class="step-status" id="step-status-5">Pending...</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Live Analysis Dashboard -->

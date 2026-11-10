@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 /**
  * Communicates with the Rivue analysis backend
  */
-async function handleAnalyzeUrl(url, refresh = false, pageData = null) {
+async function handleAnalyzeUrl(url, refresh = true, pageData = null) {
   const { apiBase } = await chrome.storage.local.get(['apiBase']);
   const endpoint = `${apiBase || DEFAULT_API_BASE}/api/analyze`;
 

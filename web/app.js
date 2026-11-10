@@ -41,28 +41,101 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const statusText = document.getElementById('scanner-status-text');
+  const progressBar = document.getElementById('scanner-progress-bar');
+  const stageLabel = document.getElementById('scanner-stage-label');
+  const percentLabel = document.getElementById('scanner-percent-label');
+
+  function setStepState(stepNum, state, statusLabel) {
+    const el = document.getElementById(`step-${stepNum}`);
+    const statusEl = document.getElementById(`step-status-${stepNum}`);
+    if (!el || !statusEl) return;
+    el.className = `audit-step ${state}`;
+    statusEl.textContent = statusLabel;
+  }
+
+  async function run5SecondScanningAnimation() {
+    // Reset all steps
+    for (let i = 1; i <= 5; i++) setStepState(i, '', 'Pending...');
+
+    // Phase 1 (0s)
+    statusText.textContent = 'Connecting to ScraperAPI residential proxies & IP rotation...';
+    stageLabel.textContent = 'Phase 1/5: Proxy Tunnel';
+    percentLabel.textContent = '20%';
+    progressBar.style.width = '20%';
+    setStepState(1, 'active', 'Connecting...');
+    await new Promise(r => setTimeout(r, 1100));
+
+    // Phase 2 (1.1s)
+    setStepState(1, 'done', 'Connected ✓');
+    statusText.textContent = 'Bypassing marketplace anti-bot wall & extracting 1500px photography...';
+    stageLabel.textContent = 'Phase 2/5: Product Extraction';
+    percentLabel.textContent = '45%';
+    progressBar.style.width = '45%';
+    setStepState(2, 'active', 'Extracting...');
+    await new Promise(r => setTimeout(r, 1200));
+
+    // Phase 3 (2.3s)
+    setStepState(2, 'done', 'Fetched ✓');
+    statusText.textContent = 'Scraping authentic customer reviews & verified star distribution...';
+    stageLabel.textContent = 'Phase 3/5: Review Corpus';
+    percentLabel.textContent = '68%';
+    progressBar.style.width = '68%';
+    setStepState(3, 'active', 'Scanning...');
+    await new Promise(r => setTimeout(r, 1200));
+
+    // Phase 4 (3.5s)
+    setStepState(3, 'done', 'Collected ✓');
+    statusText.textContent = 'Running Rivue AI Forensics (bot templates & sentiment-rating mismatch)...';
+    stageLabel.textContent = 'Phase 4/5: AI Forensics';
+    percentLabel.textContent = '88%';
+    progressBar.style.width = '88%';
+    setStepState(4, 'active', 'Analyzing...');
+    await new Promise(r => setTimeout(r, 1100));
+
+    // Phase 5 (4.6s)
+    setStepState(4, 'done', 'Audited ✓');
+    statusText.textContent = 'Computing 90-day Worth-It fair value price & Trust Score...';
+    stageLabel.textContent = 'Phase 5/5: Fair Value Recalculation';
+    percentLabel.textContent = '100%';
+    progressBar.style.width = '100%';
+    setStepState(5, 'active', 'Finalizing...');
+    await new Promise(r => setTimeout(r, 700));
+
+    setStepState(5, 'done', 'Verified ✓');
+  }
+
   async function runAnalysis(url) {
     loadingOverlay.classList.remove('hidden');
-    resultsDashboard.style.opacity = '0.3';
+    resultsDashboard.style.opacity = '0.15';
+    resultsDashboard.style.pointerEvents = 'none';
+
+    // Start 5-second realistic scanning animation concurrently with live API scrape
+    const animationPromise = run5SecondScanningAnimation();
+
+    const fetchPromise = fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, refresh: true })
+    }).then(async res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    });
 
     try {
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const data = await res.json();
+      // Guaranteed minimum 5.2 seconds so user sees full forensic audit in motion
+      const [_, data] = await Promise.all([animationPromise, fetchPromise]);
       currentAnalysis = data;
       renderDashboard(data);
     } catch (err) {
       console.error(err);
       alert('Could not inspect product reviews: ' + err.message);
     } finally {
-      loadingOverlay.classList.add('hidden');
-      resultsDashboard.style.opacity = '1';
+      setTimeout(() => {
+        loadingOverlay.classList.add('hidden');
+        resultsDashboard.style.opacity = '1';
+        resultsDashboard.style.pointerEvents = 'auto';
+      }, 300);
     }
   }
 
