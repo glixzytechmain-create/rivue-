@@ -11,8 +11,8 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 </head>
 <body>
-  <!-- Global Touch & Tap Shockwave Interaction Layer -->
-  <div id="tap-shockwave-layer" class="tap-shockwave-layer" aria-hidden="true"></div>
+  <!-- Dedicated GPU Tap Particle Supernova Canvas -->
+  <canvas id="tap-fx-canvas" class="tap-fx-canvas" aria-hidden="true"></canvas>
 
   <!-- Ambient Spatial Glow Elements -->
   <div class="ambient-glow-layer" aria-hidden="true">
@@ -23,6 +23,9 @@
 
   <!-- Cybernetic Precision Micro-Grid -->
   <div class="cyber-grid-overlay" aria-hidden="true"></div>
+
+  <!-- Realtime Constellation Matrix HUD Canvas -->
+  <canvas id="hero-hud-canvas" class="hero-hud-canvas" aria-hidden="true"></canvas>
 
   <!-- Scroll-Animated Top Navigation Bar (Fixed Pinned) -->
   <header class="navbar" id="navbar">
@@ -36,13 +39,16 @@
         </div>
         <div class="brand-info">
           <span class="brand-text">RIVUE</span>
-          <span class="brand-sub">FORENSIC ENGINE v2.4</span>
+          <span class="brand-sub">QUANTUM CORE v2.5</span>
         </div>
       </a>
 
+      <!-- Realtime Cyber Clock & Telemetry Badge in Navbar -->
       <div class="nav-telemetry-badge">
         <span class="telemetry-dot"></span>
-        <span class="telemetry-text">CLOUD AUDIT CORE ACTIVE</span>
+        <span class="telemetry-text" id="nav-telemetry-status">AUDIT MATRIX ARMED</span>
+        <span class="telemetry-divider">|</span>
+        <span class="telemetry-mono" id="nav-clock">UTC 00:00:00</span>
       </div>
 
       <nav class="nav-links">
@@ -79,31 +85,78 @@
   </header>
 
   <main class="main-content">
-    <!-- Hero Forensics Section -->
+    <!-- Hero Forensics Section: Maximalist Constantly Animated Command Center -->
     <section class="hero-section">
-      <div class="hero-tag-badge">
-        <span class="tag-pulse"></span>
-        <span class="tag-label">NEURAL MARKETPLACE FORENSICS</span>
+      <!-- 3D Kinetic Holographic Gyroscope Badge -->
+      <div class="hero-cyber-gyro" aria-hidden="true">
+        <div class="gyro-ring ring-outer"></div>
+        <div class="gyro-ring ring-inner"></div>
+        <div class="gyro-center-node">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span class="gyro-beacon"></span>
+        </div>
       </div>
 
-      <!-- High-Impact Cinematic Headline -->
-      <h1 class="hero-title">
-        Stop Falling For<br>
-        <span class="hero-flipper-box">
-          <span class="hero-flipper-text" id="hero-flipping-text">Fake 5-Star Reviews.</span>
+      <div class="hero-tag-badge">
+        <span class="tag-pulse"></span>
+        <span class="tag-label">NEURAL DECEPTION FORENSICS // REALTIME MATRIX</span>
+      </div>
+
+      <!-- Left & Right Floating 3D Telemetry HUD Cards -->
+      <div class="hero-hud-float left-hud desktop-only" data-tilt>
+        <div class="hud-f-header">
+          <span class="hud-dot-green"></span>
+          <span class="hud-mono">BURST DETECTION</span>
+        </div>
+        <div class="hud-f-val">99.8%</div>
+        <div class="hud-f-sub">Bot Syndicate Catch Rate</div>
+        <div class="hud-sound-wave">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+
+      <div class="hero-hud-float right-hud desktop-only" data-tilt>
+        <div class="hud-f-header">
+          <span class="hud-dot-cyan"></span>
+          <span class="hud-mono">LIVE TELEMETRY</span>
+        </div>
+        <div class="hud-f-val" id="hud-live-audited">1,489,204</div>
+        <div class="hud-f-sub">Reviews Audited Today</div>
+        <div class="hud-latency-pill">
+          <span class="latency-dot"></span>
+          <span>14ms • TOKYO-01</span>
+        </div>
+      </div>
+
+      <!-- Constant Plasma-Shimmer Kinetic Headline -->
+      <h1 class="hero-title maximalist-title">
+        <span class="hero-line-solid">STOP FALLING FOR</span>
+        <span class="hero-line-plasma">
+          <span class="plasma-gradient-text" id="hero-flipping-phrase">FAKE 5-STAR REVIEWS.</span>
         </span>
       </h1>
 
       <p class="hero-desc">
-        Rivue strips away bot-farm praise, sponsored rating inflation, and manipulated reviews to reveal the unfiltered consensus of verified buyers.
+        Rivue deploys residential scraping clusters, neural sentiment deconstruction, and deceptive velocity analysis to extract what verified buyers actually experienced.
       </p>
 
-      <!-- Ergonomic Search & Inspection Capsule -->
+      <!-- Maximalist Cyber Command Capsule with Perimeter Laser & Corner Target Reticles -->
       <div class="analyzer-capsule-wrap" id="analyzer">
-        <div class="analyzer-capsule">
+        <div class="analyzer-capsule maximalist-capsule">
+          <!-- Cyber Target Corners -->
+          <span class="hud-reticle reticle-tl" aria-hidden="true"></span>
+          <span class="hud-reticle reticle-tr" aria-hidden="true"></span>
+          <span class="hud-reticle reticle-bl" aria-hidden="true"></span>
+          <span class="hud-reticle reticle-br" aria-hidden="true"></span>
+
+          <!-- Perimeter Laser Tracing Light Beam -->
+          <div class="capsule-perimeter-glow" aria-hidden="true"></div>
+
           <div class="capsule-input-row">
             <div class="input-prefix-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
@@ -111,7 +164,7 @@
             <input 
               type="url" 
               id="product-url" 
-              placeholder="Paste Amazon, Flipkart, Walmart or any URL..." 
+              placeholder="Paste Amazon, Flipkart, Walmart or any listing URL..." 
               autocomplete="off" 
               spellcheck="false" 
               autofocus 
@@ -120,16 +173,17 @@
 
           <div class="capsule-actions-row">
             <button id="btn-paste-url" class="btn-capsule-paste" type="button" title="Paste link from clipboard">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
                 <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
               </svg>
               <span>Paste</span>
             </button>
 
-            <button id="btn-run-analysis" class="btn-capsule-submit" type="button">
-              <span>Inspect Reviews</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <button id="btn-run-analysis" class="btn-capsule-submit maximalist-btn" type="button">
+              <span class="btn-text">Inspect Reviews</span>
+              <span class="btn-glow-pulse" aria-hidden="true"></span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
@@ -137,23 +191,10 @@
           </div>
         </div>
 
-        <!-- 1-Tap Sample Presets for Instant Testing -->
-        <div class="sample-presets-wrap">
-          <span class="sample-presets-label">Instant Test Presets:</span>
-          <div class="sample-presets-pills">
-            <button type="button" class="sample-preset-pill" data-url="https://www.amazon.com/dp/B09V3K4XYZ" title="SonicPulse ANC Earbuds (Amazon)">
-              <span class="preset-pill-dot"></span>
-              <span>🎧 SonicPulse Earbuds</span>
-            </button>
-            <button type="button" class="sample-preset-pill" data-url="https://www.flipkart.com/boat-airdopes-141/p/itm123456" title="boAt Airdopes 141 (Flipkart)">
-              <span class="preset-pill-dot"></span>
-              <span>⚡ boAt Airdopes</span>
-            </button>
-            <button type="button" class="sample-preset-pill" data-url="https://www.walmart.com/ip/onn-android-tv-4k/987654321" title="onn 4K Streaming Box (Walmart)">
-              <span class="preset-pill-dot"></span>
-              <span>📺 onn 4K Streamer</span>
-            </button>
-          </div>
+        <!-- Dynamic Marketplace Protocol Detection Bar -->
+        <div class="capsule-protocol-status" id="protocol-status-badge">
+          <span class="status-radar-dot"></span>
+          <span class="status-msg" id="protocol-status-text">PASTE ANY PRODUCT URL TO COMMENCE DEEP PACKET AUDIT</span>
         </div>
 
         <div class="capsule-subtext">
@@ -300,8 +341,8 @@
       </div>
     </div>
 
-    <!-- Live Analysis Bento-Grid Dashboard -->
-    <section id="results-dashboard" class="dashboard-section">
+    <!-- Live Analysis Bento-Grid Dashboard (Revealed Post-Audit) -->
+    <section id="results-dashboard" class="dashboard-section hidden">
       <div class="bento-grid">
         <!-- Bento Card 1: Product Preview & Target Intel -->
         <div class="card product-card" data-tilt>

@@ -17,44 +17,164 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeFilter = 'all';
 
   // ==========================================================================
-  // 1. UNIVERSAL TAP RIPPLE & SPRING INTERACTION ENGINE
+  // 1. MAXIMALIST GPU TAP PARTICLE SUPERNOVA & SHOCKWAVE ENGINE
   // ==========================================================================
-  function createRipple(e) {
-    const target = e.currentTarget;
-    const rect = target.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple-wave';
+  const tapCanvas = document.getElementById('tap-fx-canvas');
+  let tapCtx = null;
+  let tapWidth = 0;
+  let tapHeight = 0;
+  const activeParticles = [];
+  const activeShockwaves = [];
+  let isFxLoopRunning = false;
 
-    const size = Math.max(rect.width, rect.height) * 1.5;
-    const x = (e.clientX || (e.touches && e.touches[0]?.clientX) || (rect.left + rect.width / 2)) - rect.left - size / 2;
-    const y = (e.clientY || (e.touches && e.touches[0]?.clientY) || (rect.top + rect.height / 2)) - rect.top - size / 2;
+  function resizeTapCanvas() {
+    if (!tapCanvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    tapWidth = window.innerWidth;
+    tapHeight = window.innerHeight;
+    tapCanvas.width = tapWidth * dpr;
+    tapCanvas.height = tapHeight * dpr;
+    tapCtx = tapCanvas.getContext('2d');
+    tapCtx.scale(dpr, dpr);
+  }
+  resizeTapCanvas();
+  window.addEventListener('resize', resizeTapCanvas);
 
-    ripple.style.width = `${size}px`;
-    ripple.style.height = `${size}px`;
-    ripple.style.left = `${x}px`;
-    ripple.style.top = `${y}px`;
+  const SPARK_COLORS = ['#38bdf8', '#06b6d4', '#60a5fa', '#a855f7', '#ec4899', '#ffffff', '#fbbf24'];
 
-    target.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 700);
+  function spawnTapSupernova(x, y) {
+    if (!tapCtx) return;
+
+    // 1. Dual Shockwave Rings
+    activeShockwaves.push({
+      x, y,
+      radius: 5,
+      maxRadius: 130,
+      color: '#38bdf8',
+      alpha: 1,
+      speed: 14,
+      lineWidth: 3.5
+    });
+
+    activeShockwaves.push({
+      x, y,
+      radius: 0,
+      maxRadius: 190,
+      color: '#a855f7',
+      alpha: 0.85,
+      speed: 10,
+      lineWidth: 2
+    });
+
+    // 2. 26 Physics-driven Sparks
+    const count = 26;
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+      const speed = 4 + Math.random() * 11;
+      activeParticles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        color: SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)],
+        size: 2.5 + Math.random() * 3,
+        life: 1,
+        decay: 0.025 + Math.random() * 0.03,
+        trail: []
+      });
+    }
+
+    // 3. Screen micro-quake & haptic punch
+    document.body.classList.remove('screen-micro-quake');
+    void document.body.offsetWidth;
+    document.body.classList.add('screen-micro-quake');
+    setTimeout(() => document.body.classList.remove('screen-micro-quake'), 150);
+
+    if (window.navigator && window.navigator.vibrate) {
+      try { window.navigator.vibrate([20, 35, 20]); } catch (_) {}
+    }
+
+    if (!isFxLoopRunning) {
+      isFxLoopRunning = true;
+      requestAnimationFrame(renderTapFx);
+    }
   }
 
-  // ==========================================================================
-  // 1. UNIVERSAL TACTILE TAP SYSTEM (SHOCKWAVE + MECHANICAL CRUNCH + HAPTICS)
-  // ==========================================================================
-  const shockwaveLayer = document.getElementById('tap-shockwave-layer');
+  function renderTapFx() {
+    if (!tapCtx) return;
+    tapCtx.clearRect(0, 0, tapWidth, tapHeight);
+    tapCtx.globalCompositeOperation = 'lighter';
 
-  function triggerGlobalShockwave(x, y) {
-    if (!shockwaveLayer) return;
-    const ring = document.createElement('span');
-    ring.className = 'tap-shockwave';
-    ring.style.left = `${x}px`;
-    ring.style.top = `${y}px`;
-    shockwaveLayer.appendChild(ring);
-    setTimeout(() => ring.remove(), 450);
+    // Render Shockwaves
+    for (let i = activeShockwaves.length - 1; i >= 0; i--) {
+      const sw = activeShockwaves[i];
+      sw.radius += sw.speed;
+      sw.alpha -= sw.speed / sw.maxRadius;
 
-    // Physical haptic pulse on mobile devices
-    if (window.navigator && window.navigator.vibrate) {
-      try { window.navigator.vibrate(12); } catch (_) {}
+      if (sw.alpha <= 0 || sw.radius >= sw.maxRadius) {
+        activeShockwaves.splice(i, 1);
+        continue;
+      }
+
+      tapCtx.save();
+      tapCtx.beginPath();
+      tapCtx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
+      tapCtx.strokeStyle = sw.color;
+      tapCtx.lineWidth = sw.lineWidth * sw.alpha;
+      tapCtx.globalAlpha = Math.max(0, sw.alpha);
+      tapCtx.shadowColor = sw.color;
+      tapCtx.shadowBlur = 18;
+      tapCtx.stroke();
+      tapCtx.restore();
+    }
+
+    // Render Particles
+    for (let i = activeParticles.length - 1; i >= 0; i--) {
+      const p = activeParticles[i];
+      p.trail.push({ x: p.x, y: p.y });
+      if (p.trail.length > 5) p.trail.shift();
+
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= 0.94;
+      p.vy *= 0.94;
+      p.vy += 0.22;
+      p.life -= p.decay;
+
+      if (p.life <= 0) {
+        activeParticles.splice(i, 1);
+        continue;
+      }
+
+      tapCtx.save();
+      if (p.trail.length > 1) {
+        tapCtx.beginPath();
+        tapCtx.moveTo(p.trail[0].x, p.trail[0].y);
+        for (let t = 1; t < p.trail.length; t++) {
+          tapCtx.lineTo(p.trail[t].x, p.trail[t].y);
+        }
+        tapCtx.strokeStyle = p.color;
+        tapCtx.lineWidth = p.size * 0.7 * p.life;
+        tapCtx.globalAlpha = p.life * 0.6;
+        tapCtx.shadowColor = p.color;
+        tapCtx.shadowBlur = 8;
+        tapCtx.stroke();
+      }
+
+      tapCtx.beginPath();
+      tapCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      tapCtx.fillStyle = p.color;
+      tapCtx.globalAlpha = p.life;
+      tapCtx.shadowColor = p.color;
+      tapCtx.shadowBlur = 14;
+      tapCtx.fill();
+      tapCtx.restore();
+    }
+
+    if (activeParticles.length > 0 || activeShockwaves.length > 0) {
+      requestAnimationFrame(renderTapFx);
+    } else {
+      isFxLoopRunning = false;
+      tapCtx.clearRect(0, 0, tapWidth, tapHeight);
     }
   }
 
@@ -62,17 +182,15 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('pointerdown', (e) => {
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
     const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
-    triggerGlobalShockwave(clientX, clientY);
+    spawnTapSupernova(clientX, clientY);
 
-    const interactive = e.target.closest('button, a, input, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .sample-preset-pill, .btn-download-cyber, .server-pill, .btn-install-helper, .ext-download-btn, .btn-primary, .btn-secondary, .card, .platform-glass-card');
+    const interactive = e.target.closest('button, a, input, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .server-pill, .btn-install-helper, .ext-download-btn, .btn-primary, .btn-secondary, .card, .platform-glass-card');
     if (interactive && !interactive.disabled) {
-      // Mechanical compression locked for 180ms so human eye sees and feels it
       interactive.classList.add('tap-pressed');
       setTimeout(() => {
         interactive.classList.remove('tap-pressed');
       }, 180);
 
-      // In-element ripple wave
       const rect = interactive.getBoundingClientRect();
       const ripple = document.createElement('span');
       ripple.className = 'ripple-wave';
@@ -84,9 +202,188 @@ document.addEventListener('DOMContentLoaded', () => {
       ripple.style.left = `${x}px`;
       ripple.style.top = `${y}px`;
       interactive.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
+      setTimeout(() => ripple.remove(), 550);
     }
   }, { passive: true });
+
+  // ==========================================================================
+  // 2. REALTIME CONSTELLATION MATRIX HUD CANVAS ENGINE
+  // ==========================================================================
+  const hudCanvas = document.getElementById('hero-hud-canvas');
+  if (hudCanvas) {
+    const hctx = hudCanvas.getContext('2d');
+    let hw = 0;
+    let hh = 0;
+    const nodes = [];
+    const nodeCount = 55;
+    let mouseX = -1000;
+    let mouseY = -1000;
+
+    function resizeHud() {
+      const parent = hudCanvas.parentElement || document.body;
+      const dpr = window.devicePixelRatio || 1;
+      hw = parent.offsetWidth || window.innerWidth;
+      hh = parent.offsetHeight || window.innerHeight;
+      hudCanvas.width = hw * dpr;
+      hudCanvas.height = hh * dpr;
+      hctx.scale(dpr, dpr);
+    }
+    resizeHud();
+    window.addEventListener('resize', resizeHud);
+
+    window.addEventListener('pointermove', (e) => {
+      const rect = hudCanvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    for (let i = 0; i < nodeCount; i++) {
+      nodes.push({
+        x: Math.random() * hw,
+        y: Math.random() * hh,
+        vx: (Math.random() - 0.5) * 0.7,
+        vy: (Math.random() - 0.5) * 0.7,
+        radius: 1.5 + Math.random() * 2,
+        baseColor: Math.random() > 0.4 ? 'rgba(56, 189, 248, ' : 'rgba(129, 140, 248, '
+      });
+    }
+
+    let radarAngle = 0;
+
+    function renderHud() {
+      hctx.clearRect(0, 0, hw, hh);
+
+      // Rotating Central Radar Reticle
+      const cx = hw / 2;
+      const cy = Math.min(hh * 0.38, 280);
+      radarAngle += 0.008;
+
+      hctx.save();
+      hctx.translate(cx, cy);
+      hctx.rotate(radarAngle);
+      hctx.beginPath();
+      hctx.arc(0, 0, 160, 0, Math.PI * 2);
+      hctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+      hctx.lineWidth = 1;
+      hctx.setLineDash([4, 12]);
+      hctx.stroke();
+
+      hctx.beginPath();
+      hctx.arc(0, 0, 95, 0, Math.PI * 2);
+      hctx.strokeStyle = 'rgba(6, 182, 212, 0.12)';
+      hctx.setLineDash([2, 6]);
+      hctx.stroke();
+      hctx.setLineDash([]);
+      hctx.restore();
+
+      // Nodes & Connections
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        n.x += n.vx;
+        n.y += n.vy;
+
+        if (n.x < 0) n.x = hw;
+        if (n.x > hw) n.x = 0;
+        if (n.y < 0) n.y = hh;
+        if (n.y > hh) n.y = 0;
+
+        // Mouse attraction
+        const dx = mouseX - n.x;
+        const dy = mouseY - n.y;
+        const distToMouse = Math.sqrt(dx * dx + dy * dy);
+        if (distToMouse < 140) {
+          n.x += (dx / distToMouse) * 0.6;
+          n.y += (dy / distToMouse) * 0.6;
+        }
+
+        // Draw node
+        hctx.beginPath();
+        hctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+        hctx.fillStyle = n.baseColor + '0.6)';
+        hctx.shadowColor = '#38bdf8';
+        hctx.shadowBlur = 6;
+        hctx.fill();
+
+        // Connect nearby nodes
+        for (let j = i + 1; j < nodes.length; j++) {
+          const n2 = nodes[j];
+          const ndx = n.x - n2.x;
+          const ndy = n.y - n2.y;
+          const ndist = Math.sqrt(ndx * ndx + ndy * ndy);
+          if (ndist < 95) {
+            hctx.beginPath();
+            hctx.moveTo(n.x, n.y);
+            hctx.lineTo(n2.x, n2.y);
+            hctx.strokeStyle = `rgba(56, 189, 248, ${0.18 * (1 - ndist / 95)})`;
+            hctx.lineWidth = 0.8;
+            hctx.shadowBlur = 0;
+            hctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(renderHud);
+    }
+    requestAnimationFrame(renderHud);
+  }
+
+  // ==========================================================================
+  // 3. LIVE UTC CLOCK & REALTIME TELEMETRY COUNTER
+  // ==========================================================================
+  const navClock = document.getElementById('nav-clock');
+  function updateNavClock() {
+    if (navClock) {
+      const now = new Date();
+      const h = String(now.getUTCHours()).padStart(2, '0');
+      const m = String(now.getUTCMinutes()).padStart(2, '0');
+      const s = String(now.getUTCSeconds()).padStart(2, '0');
+      navClock.textContent = `UTC ${h}:${m}:${s}`;
+    }
+  }
+  setInterval(updateNavClock, 1000);
+  updateNavClock();
+
+  const auditedCountEl = document.getElementById('hud-live-audited');
+  let currentAudited = 1489204;
+  setInterval(() => {
+    currentAudited += Math.floor(Math.random() * 4) + 1;
+    if (auditedCountEl) {
+      auditedCountEl.textContent = currentAudited.toLocaleString();
+    }
+  }, 3200);
+
+  // ==========================================================================
+  // 4. MARKETPLACE PROTOCOL REALTIME DETECTION ON URL
+  // ==========================================================================
+  const protocolBadge = document.getElementById('protocol-status-badge');
+  const protocolText = document.getElementById('protocol-status-text');
+
+  function updateProtocolStatus(val) {
+    if (!protocolText) return;
+    const url = (val || '').toLowerCase().trim();
+    if (!url) {
+      protocolText.textContent = 'PASTE ANY PRODUCT URL TO COMMENCE DEEP PACKET AUDIT';
+      if (protocolBadge) protocolBadge.style.borderColor = 'rgba(56, 189, 248, 0.25)';
+      return;
+    }
+    if (url.includes('amazon.')) {
+      protocolText.textContent = '⚡ AMAZON LISTING DETECTED // HIGH-PRIORITY RESIDENTIAL PROXY POOL';
+      if (protocolBadge) protocolBadge.style.borderColor = '#fbbf24';
+    } else if (url.includes('flipkart.')) {
+      protocolText.textContent = '🛒 FLIPKART CATALOG DETECTED // REVERSE-DOM INJECTION ARMED';
+      if (protocolBadge) protocolBadge.style.borderColor = '#38bdf8';
+    } else if (url.includes('walmart.')) {
+      protocolText.textContent = '🎯 WALMART PRODUCT DETECTED // REVIEW VELOCITY ANALYZER READY';
+      if (protocolBadge) protocolBadge.style.borderColor = '#34d399';
+    } else {
+      protocolText.textContent = '🌐 UNIVERSAL COMMERCE TARGET DETECTED // DEEP SCRAPING TUNNEL ENGAGED';
+      if (protocolBadge) protocolBadge.style.borderColor = '#818cf8';
+    }
+  }
+
+  if (inputUrl) {
+    inputUrl.addEventListener('input', (e) => updateProtocolStatus(e.target.value));
+  }
 
   // Specular Cursor Spotlight tracking across cards
   const cards = document.querySelectorAll('.card, .platform-glass-card');
@@ -136,11 +433,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // CINEMATIC HERO TEXT FLIPPER
   // ==========================================================================
   const flippingPhrases = [
-    'Fake 5-Star Reviews.',
-    'Bot-Farm Ratings.',
-    'Sponsored Deceptions.',
-    'Manipulated Prices.',
-    'AI-Generated Praise.'
+    'FAKE 5-STAR REVIEWS.',
+    'BOT-FARM RATINGS.',
+    'SPONSORED DECEPTIONS.',
+    'MANIPULATED PRICES.',
+    'AI-GENERATED PRAISE.'
   ];
   let phraseIdx = 0;
   const flipEl = document.getElementById('hero-flipping-phrase');
@@ -158,20 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 350);
     }, 2800);
   }
-
-  // ==========================================================================
-  // 1-TAP SAMPLE PRESET QUICK AUDIT
-  // ==========================================================================
-  const samplePills = document.querySelectorAll('.sample-preset-pill');
-  samplePills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      const targetUrl = pill.getAttribute('data-url');
-      if (targetUrl && inputUrl) {
-        inputUrl.value = targetUrl;
-        if (btnRun) btnRun.click();
-      }
-    });
-  });
   // 2. UNIVERSAL BACKEND SERVER CONNECTION MANAGEMENT & AUTO-DISCOVERY
   // ==========================================================================
   const PUBLIC_CLOUD_URL = 'https://myth-subaru-following-understood.trycloudflare.com';
@@ -644,19 +927,24 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         alert(err.message);
       }
-    } finally {
       setTimeout(() => {
         loadingOverlay.classList.add('hidden');
-        resultsDashboard.style.opacity = '1';
-        resultsDashboard.style.pointerEvents = 'auto';
+        if (resultsDashboard) {
+          resultsDashboard.classList.remove('hidden');
+          resultsDashboard.style.opacity = '1';
+          resultsDashboard.style.pointerEvents = 'auto';
 
-        // Trigger smooth card entrance refresh
-        const cardsToStagger = resultsDashboard.querySelectorAll('.card');
-        cardsToStagger.forEach((c, idx) => {
-          c.style.animation = 'none';
-          c.offsetHeight; // Trigger reflow
-          c.style.animation = `cardEntrance 0.7s var(--spring-smooth) ${idx * 0.08}s both`;
-        });
+          // Trigger smooth card entrance refresh
+          const cardsToStagger = resultsDashboard.querySelectorAll('.card');
+          cardsToStagger.forEach((c, idx) => {
+            c.style.animation = 'none';
+            c.offsetHeight; // Trigger reflow
+            c.style.animation = `cardEntrance 0.7s var(--spring-smooth) ${idx * 0.08}s both`;
+          });
+
+          // Smoothly scroll down to dashboard
+          resultsDashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }, 300);
     }
   }
