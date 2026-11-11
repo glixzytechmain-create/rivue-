@@ -1,8 +1,12 @@
-// Rivue Web Application Controller
+// ==========================================================================
+// RIVUE WEB CONTROLLER — CYBER-FORENSIC INTELLIGENCE ENGINE
+// Kinetic Tap Ripple Engine, Liquid SVG Gauge, Telemetry Stream & Real Scrapes
+// ==========================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
   const inputUrl = document.getElementById('product-url');
   const btnRun = document.getElementById('btn-run-analysis');
-  const sampleBtns = document.querySelectorAll('.sample-btn');
+  const btnPaste = document.getElementById('btn-paste-url');
   const loadingOverlay = document.getElementById('loading-overlay');
   const resultsDashboard = document.getElementById('results-dashboard');
   const errorBanner = document.getElementById('error-banner');
@@ -12,7 +16,49 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentAnalysis = null;
   let activeFilter = 'all';
 
-  // --- Backend Server Connection Management ---
+  // ==========================================================================
+  // 1. UNIVERSAL TAP RIPPLE & SPRING INTERACTION ENGINE
+  // ==========================================================================
+  function createRipple(e) {
+    const target = e.currentTarget;
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-wave';
+
+    const size = Math.max(rect.width, rect.height) * 1.5;
+    const x = (e.clientX || (e.touches && e.touches[0]?.clientX) || (rect.left + rect.width / 2)) - rect.left - size / 2;
+    const y = (e.clientY || (e.touches && e.touches[0]?.clientY) || (rect.top + rect.height / 2)) - rect.top - size / 2;
+
+    ripple.style.width = `${size}px`;
+    ripple.style.height = `${size}px`;
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
+  }
+
+  // Bind ripple to all interactive controls
+  const rippleTargets = document.querySelectorAll('button, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .server-pill');
+  rippleTargets.forEach(el => {
+    el.addEventListener('pointerdown', createRipple);
+  });
+
+  // Specular Cursor Spotlight tracking across cards
+  const cards = document.querySelectorAll('.card, .platform-glass-card');
+  cards.forEach(card => {
+    card.addEventListener('pointermove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+    });
+  });
+
+  // ==========================================================================
+  // 2. BACKEND SERVER CONNECTION MANAGEMENT
+  // ==========================================================================
   const DEFAULT_REMOTE_IP = '10.178.253.57';
   const serverPill = document.getElementById('btn-server-settings');
   const serverStatusDot = document.getElementById('server-status-dot');
@@ -65,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return false;
   }
 
-  // Initialize server modal & initial health ping
   if (serverUrlInput) {
     serverUrlInput.value = getSavedServerUrl() || getApiBaseUrl();
   }
@@ -80,6 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnCloseServerModal) {
     btnCloseServerModal.addEventListener('click', () => {
+      serverModal.classList.add('hidden');
+    });
+  }
+
+  const modalBackdrop = document.querySelector('.modal-backdrop-blur');
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener('click', () => {
       serverModal.classList.add('hidden');
     });
   }
@@ -128,10 +180,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Run initial health check on load
+  // Initial health check on launch
   checkServerHealth();
 
-  // --- Clipboard Integration (Capacitor & Web) ---
+  // ==========================================================================
+  // 3. CLIPBOARD INTEGRATION (CAPACITOR + WEB)
+  // ==========================================================================
   async function readClipboardText() {
     try {
       if (window.Capacitor?.Plugins?.Clipboard) {
@@ -149,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return '';
   }
 
-  const btnPaste = document.getElementById('btn-paste-url');
   if (btnPaste) {
     btnPaste.addEventListener('click', async () => {
       try {
@@ -167,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Load default analysis only if an initial value is provided
-  if (inputUrl.value.trim()) {
+  // Auto-run if input already populated
+  if (inputUrl && inputUrl.value.trim()) {
     runAnalysis(inputUrl.value.trim());
   }
 
@@ -181,16 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') btnRun.click();
   });
 
-  sampleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      sampleBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const url = btn.getAttribute('data-url');
-      inputUrl.value = url;
-      runAnalysis(url);
-    });
-  });
-
+  // Filter Tabs
   ftabs.forEach(tab => {
     tab.addEventListener('click', () => {
       ftabs.forEach(t => t.classList.remove('active'));
@@ -200,10 +244,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ==========================================================================
+  // 4. ANIMATED NUMBER TICKER & RADIAL GAUGE DRIVER
+  // ==========================================================================
+  function animateValue(element, start, end, duration, formatFn = (v) => Math.round(v)) {
+    if (!element) return;
+    const startTime = performance.now();
+    const diff = end - start;
+
+    function step(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Cubic ease out
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const current = start + diff * easeProgress;
+      element.textContent = formatFn(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        element.textContent = formatFn(end);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function updateRadialGauge(score) {
+    const strokeCircle = document.getElementById('gauge-stroke-fill');
+    if (!strokeCircle) return;
+    const circumference = 2 * Math.PI * 68; // radius 68 -> ~427.26
+    const offset = circumference * (1 - Math.max(0, Math.min(100, score)) / 100);
+    strokeCircle.style.strokeDashoffset = offset;
+
+    // Shift color based on threat level
+    if (score >= 70) {
+      strokeCircle.style.stroke = '#34d399';
+      strokeCircle.style.filter = 'drop-shadow(0 0 10px rgba(52, 211, 153, 0.7))';
+    } else if (score >= 45) {
+      strokeCircle.style.stroke = '#fbbf24';
+      strokeCircle.style.filter = 'drop-shadow(0 0 10px rgba(251, 191, 36, 0.7))';
+    } else {
+      strokeCircle.style.stroke = '#f43f5e';
+      strokeCircle.style.filter = 'drop-shadow(0 0 10px rgba(244, 63, 94, 0.7))';
+    }
+  }
+
+  // ==========================================================================
+  // 5. 5-SECOND FORENSIC RADAR SCANNER SIMULATOR
+  // ==========================================================================
   const statusText = document.getElementById('scanner-status-text');
   const progressBar = document.getElementById('scanner-progress-bar');
   const stageLabel = document.getElementById('scanner-stage-label');
   const percentLabel = document.getElementById('scanner-percent-label');
+  const telemetryTicker = document.getElementById('telemetry-ticker');
 
   function setStepState(stepNum, state, statusLabel) {
     const el = document.getElementById(`step-${stepNum}`);
@@ -214,66 +307,72 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function run5SecondScanningAnimation() {
-    // Reset all steps
     for (let i = 1; i <= 5; i++) setStepState(i, '', 'Pending...');
 
-    // Phase 1 (0s)
-    statusText.textContent = 'Connecting to ScraperAPI residential proxies & IP rotation...';
+    // Phase 1
+    statusText.textContent = 'Establishing TLS tunnel to ScraperAPI residential IP pool...';
     stageLabel.textContent = 'Phase 1/5: Proxy Tunnel';
     percentLabel.textContent = '20%';
     progressBar.style.width = '20%';
+    if (telemetryTicker) telemetryTicker.textContent = 'TUNNELING PACKETS VIA RESIDENTIAL PROXY ROTATION...';
     setStepState(1, 'active', 'Connecting...');
     await new Promise(r => setTimeout(r, 1100));
 
-    // Phase 2 (1.1s)
+    // Phase 2
     setStepState(1, 'done', 'Connected ✓');
-    statusText.textContent = 'Bypassing marketplace anti-bot wall & extracting 1500px photography...';
-    stageLabel.textContent = 'Phase 2/5: Product Extraction';
+    statusText.textContent = 'Bypassing Cloudflare/DataDome & extracting 1500px photography...';
+    stageLabel.textContent = 'Phase 2/5: DOM Extraction';
     percentLabel.textContent = '45%';
     progressBar.style.width = '45%';
+    if (telemetryTicker) telemetryTicker.textContent = 'PARSING DOM TREE & ASIN METADATA ATTRIBUTES...';
     setStepState(2, 'active', 'Extracting...');
     await new Promise(r => setTimeout(r, 1200));
 
-    // Phase 3 (2.3s)
+    // Phase 3
     setStepState(2, 'done', 'Fetched ✓');
     statusText.textContent = 'Scraping authentic customer reviews & verified star distribution...';
     stageLabel.textContent = 'Phase 3/5: Review Corpus';
     percentLabel.textContent = '68%';
     progressBar.style.width = '68%';
+    if (telemetryTicker) telemetryTicker.textContent = 'HARVESTING FULL REVIEW CORPUS & STAR DISTRIBUTIONS...';
     setStepState(3, 'active', 'Scanning...');
     await new Promise(r => setTimeout(r, 1200));
 
-    // Phase 4 (3.5s)
+    // Phase 4
     setStepState(3, 'done', 'Collected ✓');
-    statusText.textContent = 'Running Rivue AI Forensics (bot templates & sentiment-rating mismatch)...';
+    statusText.textContent = 'Executing Rivue AI Forensics (syndicated bot clusters & sentiment divergence)...';
     stageLabel.textContent = 'Phase 4/5: AI Forensics';
     percentLabel.textContent = '88%';
     progressBar.style.width = '88%';
-    setStepState(4, 'active', 'Analyzing...');
+    if (telemetryTicker) telemetryTicker.textContent = 'CROSS-REFERENCING BOT PHRASES & TEXT-STAR SENTIMENT...';
+    setStepState(4, 'active', 'Auditing...');
     await new Promise(r => setTimeout(r, 1100));
 
-    // Phase 5 (4.6s)
+    // Phase 5
     setStepState(4, 'done', 'Audited ✓');
-    statusText.textContent = 'Computing 90-day Worth-It fair value price & Trust Score...';
-    stageLabel.textContent = 'Phase 5/5: Fair Value Recalculation';
+    statusText.textContent = 'Computing 90-day Worth-It fair value price & Trust Score consensus...';
+    stageLabel.textContent = 'Phase 5/5: Consensus Engine';
     percentLabel.textContent = '100%';
     progressBar.style.width = '100%';
+    if (telemetryTicker) telemetryTicker.textContent = 'FINALIZING TRUST MATRIX & WORTH-IT MARGINS...';
     setStepState(5, 'active', 'Finalizing...');
     await new Promise(r => setTimeout(r, 700));
 
     setStepState(5, 'done', 'Verified ✓');
   }
 
+  // ==========================================================================
+  // 6. ANALYSIS PIPELINE
+  // ==========================================================================
   async function runAnalysis(url) {
     if (errorBanner) errorBanner.classList.add('hidden');
     loadingOverlay.classList.remove('hidden');
-    resultsDashboard.style.opacity = '0.15';
+    resultsDashboard.style.opacity = '0.12';
     resultsDashboard.style.pointerEvents = 'none';
 
-    // Start 5-second realistic scanning animation concurrently with live API scrape
     const animationPromise = run5SecondScanningAnimation();
-
     const baseUrl = getApiBaseUrl();
+
     const fetchPromise = fetch(`${baseUrl}/api/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -292,12 +391,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     try {
-      // Guaranteed minimum 5.2 seconds so user sees full forensic audit in motion
       const [_, data] = await Promise.all([animationPromise, fetchPromise]);
       currentAnalysis = data;
       renderDashboard(data);
     } catch (err) {
-      console.error(err);
+      console.error('Rivue Analysis Error:', err);
       if (errorBanner && errorBannerText) {
         errorBannerText.textContent = err.message;
         errorBanner.classList.remove('hidden');
@@ -309,10 +407,21 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingOverlay.classList.add('hidden');
         resultsDashboard.style.opacity = '1';
         resultsDashboard.style.pointerEvents = 'auto';
+
+        // Trigger smooth card entrance refresh
+        const cardsToStagger = resultsDashboard.querySelectorAll('.card');
+        cardsToStagger.forEach((c, idx) => {
+          c.style.animation = 'none';
+          c.offsetHeight; // Trigger reflow
+          c.style.animation = `cardEntrance 0.7s var(--spring-smooth) ${idx * 0.08}s both`;
+        });
       }, 300);
     }
   }
 
+  // ==========================================================================
+  // 7. DASHBOARD RENDERER
+  // ==========================================================================
   function renderDashboard(data) {
     // 1. Overview & Photo
     const imgEl = document.getElementById('dash-img');
@@ -330,26 +439,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Verdict & Grade
     const verdictEl = document.getElementById('dash-verdict');
     verdictEl.textContent = data.verdict;
-    verdictEl.className = `verdict-title ${data.verdict.toLowerCase().replace(/\s+/g, '-')}`;
+    verdictEl.className = `verdict-display ${data.verdict.toLowerCase().replace(/\s+/g, '-')}`;
 
     const gradeEl = document.getElementById('dash-grade');
     gradeEl.textContent = data.grade;
-    gradeEl.className = `grade-badge grade-${data.grade}`;
+    gradeEl.className = `grade-capsule grade-${data.grade}`;
 
-    // 3. Comparison
-    document.getElementById('dash-orig-rating').textContent = data.originalRating;
-    document.getElementById('dash-rivue-rating').textContent = data.rivueRating;
+    // 3. Animated Number Roll-ups for Trust & Comparison
+    const trustValEl = document.getElementById('dash-trust-val');
+    animateValue(trustValEl, 0, data.trustScore, 1200, v => Math.round(v));
+    updateRadialGauge(data.trustScore);
+
+    const origRatingEl = document.getElementById('dash-orig-rating');
+    animateValue(origRatingEl, 0, data.originalRating, 1000, v => v.toFixed(1));
+
+    const rivueRatingEl = document.getElementById('dash-rivue-rating');
+    animateValue(rivueRatingEl, 0, data.rivueRating, 1200, v => v.toFixed(1));
 
     const deltaSign = data.ratingDifference > 0 ? '+' : '';
     const deltaEl = document.getElementById('dash-delta-badge');
     deltaEl.textContent = `${deltaSign}${data.ratingDifference}★`;
     deltaEl.className = `delta-badge ${data.ratingDifference < 0 ? 'negative' : 'positive'}`;
 
-    // 4. Trust Meter
-    document.getElementById('dash-trust-val').textContent = `${data.trustScore} / 100`;
-    document.getElementById('dash-meter-fill').style.width = `${data.trustScore}%`;
+    // Fallback meter fill
+    const meterFill = document.getElementById('dash-meter-fill');
+    if (meterFill) meterFill.style.width = `${data.trustScore}%`;
 
-    // 4b. Price & Value Intelligence
+    // 4. Price & Value Intelligence
     if (data.priceAnalysis) {
       const pa = data.priceAnalysis;
       document.getElementById('price-current').textContent = pa.formattedCurrentPrice;
@@ -358,15 +474,15 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('price-lowest').textContent = pa.formattedLowestPrice;
       document.getElementById('price-highest').textContent = pa.formattedHighestPrice;
 
-      // Badge
+      // Deal Badge
       const dealBadgeEl = document.getElementById('price-deal-badge');
       dealBadgeEl.textContent = pa.dealBadge;
       dealBadgeEl.className = `deal-pill badge-deal-${pa.dealVerdict.toLowerCase().replace('_', '-')}`;
 
-      // Explanation
+      // Deal Explanation
       document.getElementById('price-deal-explanation').textContent = pa.dealExplanation;
 
-      // Difference summary
+      // Diff summary tag
       const diffEl = document.getElementById('price-diff-summary');
       if (pa.priceDifference > 0) {
         diffEl.textContent = `Overpriced +${pa.currency}${Math.abs(pa.priceDifference).toFixed(2)}`;
@@ -376,10 +492,10 @@ document.addEventListener('DOMContentLoaded', () => {
         diffEl.style.color = '#34d399';
       } else {
         diffEl.textContent = 'Fair Market Match';
-        diffEl.style.color = '#60a5fa';
+        diffEl.style.color = '#38bdf8';
       }
 
-      // Range Bar Pin positions (relative to lowest and highest)
+      // Range Bar Pins
       const rangeSpan = Math.max(0.1, pa.highestPrice - pa.lowestPrice);
       const currentPct = Math.max(5, Math.min(95, ((pa.currentPrice - pa.lowestPrice) / rangeSpan) * 100));
       const worthPct = Math.max(5, Math.min(95, ((pa.worthItPrice - pa.lowestPrice) / rangeSpan) * 100));
@@ -414,21 +530,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // 5. Rationale
-    document.getElementById('dash-explanation').textContent = data.explanation;
-    const reasonsList = document.getElementById('dash-reasons');
-    reasonsList.innerHTML = '';
-    (data.reasons || []).forEach(r => {
-      const li = document.createElement('li');
-      li.textContent = r;
-      reasonsList.appendChild(li);
-    });
-
-    // 6. Analytics Breakdown
-    document.getElementById('dash-bd-dup').textContent = `${data.breakdown.duplicateBotPercentage}%`;
+    // 5. Threat Breakdown Animated Numbers & Fills
+    const bdDup = document.getElementById('dash-bd-dup');
+    animateValue(bdDup, 0, data.breakdown.duplicateBotPercentage, 900, v => `${Math.round(v)}%`);
     document.getElementById('dash-bar-dup').style.width = `${data.breakdown.duplicateBotPercentage}%`;
 
-    document.getElementById('dash-bd-unverified').textContent = `${data.breakdown.unverifiedSpikePercentage}%`;
+    const bdUnv = document.getElementById('dash-bd-unverified');
+    animateValue(bdUnv, 0, data.breakdown.unverifiedSpikePercentage, 900, v => `${Math.round(v)}%`);
     document.getElementById('dash-bar-unverified').style.width = `${data.breakdown.unverifiedSpikePercentage}%`;
 
     const vel = data.breakdown.unnaturalDistributionScore;
@@ -437,6 +545,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('dash-bd-sentiment').textContent = `${data.breakdown.sentimentMismatchCount} Flag(s)`;
     document.getElementById('dash-bar-sentiment').style.width = `${Math.min(100, data.breakdown.sentimentMismatchCount * 25)}%`;
+
+    // 6. Forensic Rationale
+    document.getElementById('dash-explanation').textContent = data.explanation;
+    const reasonsList = document.getElementById('dash-reasons');
+    reasonsList.innerHTML = '';
+    (data.reasons || []).forEach(r => {
+      const li = document.createElement('li');
+      li.textContent = r;
+      reasonsList.appendChild(li);
+    });
 
     // 7. Authentic Pros & Cons
     const prosList = document.getElementById('dash-pros');
@@ -488,6 +606,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderReviewList(reviews, activeFilter);
   }
 
+  // ==========================================================================
+  // 8. REVIEW LIST RENDERER
+  // ==========================================================================
   function renderReviewList(reviews, filter) {
     const container = document.getElementById('dash-review-list');
     container.innerHTML = '';
@@ -501,29 +622,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (filtered.length === 0) {
-      container.innerHTML = '<p style="text-align:center; padding: 24px; color: var(--text-muted);">No reviews in this category.</p>';
+      container.innerHTML = '<p style="text-align:center; padding: 32px; color: var(--text-dim); font-size: 13.5px;">No reviews in this category.</p>';
       return;
     }
 
     filtered.forEach(rev => {
       const div = document.createElement('div');
       div.className = `rev-item ${rev.isFlagged ? 'flagged' : 'authentic'}`;
-      const stars = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
+      const stars = '★'.repeat(Math.round(rev.rating)) + '☆'.repeat(5 - Math.round(rev.rating));
       const tagText = rev.isFlagged ? 'Flagged Deceptive' : 'Verified Authentic';
       const tagClass = rev.isFlagged ? 'flag' : 'ok';
 
       div.innerHTML = `
         <div class="rev-top">
           <div>
-            <span class="rev-author">${rev.author} ${rev.isVerifiedPurchase ? '✓ <span style="font-size:10px; color:#34d399;">Verified Purchase</span>' : ''}</span>
-            <span class="rev-date" style="font-size:11px; color:var(--text-muted); margin-left:8px;">${rev.date || ''}</span>
+            <span class="rev-author">${rev.author} ${rev.isVerifiedPurchase ? '✓ <span style="font-size:10.5px; color:#34d399; font-weight:600;">Verified Purchase</span>' : ''}</span>
+            <span class="rev-date" style="font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-left:8px;">${rev.date || ''}</span>
           </div>
           <div style="display:flex; align-items:center; gap:8px;">
             <span class="rev-stars">${stars}</span>
             <span class="rev-tag ${tagClass}">${tagText}</span>
           </div>
         </div>
-        ${rev.title ? `<strong style="display:block; margin: 4px 0 2px 0; font-size:13px; color:#e2e8f0;">${rev.title}</strong>` : ''}
+        ${rev.title ? `<strong style="display:block; margin: 3px 0; font-size:13.5px; color:#f1f5f9;">${rev.title}</strong>` : ''}
         <p class="rev-body">${rev.text}</p>
         ${rev.flaggedReasons && rev.flaggedReasons.length > 0 ? `
           <div class="rev-flags">
