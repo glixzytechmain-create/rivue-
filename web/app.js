@@ -57,9 +57,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================================================
-  // 2. BACKEND SERVER CONNECTION MANAGEMENT
   // ==========================================================================
-  const DEFAULT_REMOTE_IP = '10.178.253.57';
+  // 2. UNIVERSAL BACKEND SERVER CONNECTION MANAGEMENT & AUTO-DISCOVERY
+  // ==========================================================================
+  const PUBLIC_CLOUD_URL = 'https://myth-subaru-following-understood.trycloudflare.com';
+  const LOCAL_LAN_URL = 'http://192.168.97.227:3001';
+
+  // Purge any obsolete stale IP from localStorage immediately
+  const savedServer = localStorage.getItem('rivue_server_url') || '';
+  if (savedServer.includes('10.178.253.57')) {
+    localStorage.removeItem('rivue_server_url');
+  }
+
   const serverPill = document.getElementById('btn-server-settings');
   const serverStatusDot = document.getElementById('server-status-dot');
   const serverStatusText = document.getElementById('server-status-text');
@@ -68,56 +77,100 @@ document.addEventListener('DOMContentLoaded', () => {
   const serverUrlInput = document.getElementById('server-url-input');
   const btnTestServer = document.getElementById('btn-test-server');
   const btnSaveServer = document.getElementById('btn-save-server');
+  const btnAutoDetect = document.getElementById('btn-auto-detect');
   const serverTestResult = document.getElementById('server-test-result');
   const presetChips = document.querySelectorAll('.preset-chip');
+
+  let activeApiBaseUrl = '';
 
   function getSavedServerUrl() {
     return localStorage.getItem('rivue_server_url') || '';
   }
 
-  function getApiBaseUrl() {
-    const saved = getSavedServerUrl();
-    if (saved) return saved.replace(/\/$/, '');
-
-    const isCapacitor = window.Capacitor || window.location.protocol === 'capacitor:' || window.location.protocol === 'file:';
-    const isMobileHost = window.location.hostname === 'localhost' && window.location.port !== '3001';
-
-    if (isCapacitor || isMobileHost) {
-      return `http://${DEFAULT_REMOTE_IP}:3001`;
-    }
-
-    return '';
-  }
-
-  async function checkServerHealth(targetBaseUrl = getApiBaseUrl()) {
-    if (serverStatusDot) serverStatusDot.className = 'server-indicator connecting';
-    if (serverStatusText) serverStatusText.textContent = 'Connecting...';
+  async function pingHealth(baseUrl, timeoutMs = 2500) {
     try {
-      const url = targetBaseUrl ? `${targetBaseUrl}/api/health` : '/api/health';
+      const endpoint = baseUrl ? `${baseUrl.replace(/\/$/, '')}/api/health` : '/api/health';
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
-      const res = await fetch(url, { signal: controller.signal });
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      const res = await fetch(endpoint, { signal: controller.signal });
       clearTimeout(timeoutId);
       if (res.ok) {
-        if (serverStatusDot) serverStatusDot.className = 'server-indicator online';
-        if (serverStatusText) serverStatusText.textContent = 'Online';
         return true;
       }
-    } catch (e) {
-      console.warn('Server health check failed for:', targetBaseUrl, e);
-    }
-    if (serverStatusDot) serverStatusDot.className = 'server-indicator offline';
-    if (serverStatusText) serverStatusText.textContent = 'Offline';
+    } catch (e) {}
     return false;
   }
 
-  if (serverUrlInput) {
-    serverUrlInput.value = getSavedServerUrl() || getApiBaseUrl();
+  function updateServerPillUI(state, text) {
+    if (serverStatusDot) serverStatusDot.className = `server-indicator ${state}`;
+    if (serverStatusText) serverStatusText.textContent = text;
+  }
+
+  async function resolveActiveServer(forceAuto = false) {
+    updateServerPillUI('connecting', 'Connecting...');
+
+    // 1. If running in a web browser and no custom server explicitly forced:
+    const isBrowser = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+    const saved = getSavedServerUrl();
+
+    if (isBrowser && (!saved || forceAuto)) {
+      const originOk = await pingHealth('');
+      if (originOk) {
+        activeApiBaseUrl = '';
+        const isCloud = window.location.hostname.includes('trycloudflare');
+        updateServerPillUI('online', isCloud ? 'Cloud Online' : 'Online');
+        if (serverUrlInput) serverUrlInput.value = window.location.origin;
+        return '';
+      }
+    }
+
+    // 2. If saved URL exists, test if it actually works
+    if (saved && !forceAuto) {
+      const savedOk = await pingHealth(saved, 2500);
+      if (savedOk) {
+        activeApiBaseUrl = saved;
+        updateServerPillUI('online', saved.includes('trycloudflare') ? 'Cloud Online' : 'Custom Online');
+        if (serverUrlInput) serverUrlInput.value = saved;
+        return saved;
+      } else {
+        console.warn('Saved server is unreachable, falling back to auto-discovery:', saved);
+        localStorage.removeItem('rivue_server_url'); // purge dead saved url
+      }
+    }
+
+    // 3. Test candidate endpoints in order: Public Cloud -> Local Wi-Fi -> Emulator -> Localhost
+    const candidates = [
+      PUBLIC_CLOUD_URL,
+      LOCAL_LAN_URL,
+      'http://10.0.2.2:3001',
+      'http://localhost:3001'
+    ];
+
+    for (const candidate of candidates) {
+      const ok = await pingHealth(candidate, 2500);
+      if (ok) {
+        activeApiBaseUrl = candidate;
+        const isCloud = candidate.includes('trycloudflare');
+        updateServerPillUI('online', isCloud ? 'Cloud Online' : 'LAN Online');
+        if (serverUrlInput) serverUrlInput.value = candidate;
+        return candidate;
+      }
+    }
+
+    // 4. Default fallback if ping blocked by network policy
+    activeApiBaseUrl = isBrowser ? '' : PUBLIC_CLOUD_URL;
+    updateServerPillUI('offline', 'Offline');
+    if (serverUrlInput) serverUrlInput.value = activeApiBaseUrl;
+    return activeApiBaseUrl;
+  }
+
+  function getApiBaseUrl() {
+    return activeApiBaseUrl;
   }
 
   if (serverPill) {
     serverPill.addEventListener('click', () => {
-      serverUrlInput.value = getSavedServerUrl() || getApiBaseUrl();
+      serverUrlInput.value = getSavedServerUrl() || activeApiBaseUrl || PUBLIC_CLOUD_URL;
       if (serverTestResult) serverTestResult.classList.add('hidden');
       serverModal.classList.remove('hidden');
     });
@@ -154,14 +207,34 @@ document.addEventListener('DOMContentLoaded', () => {
         serverTestResult.textContent = 'Pinging server...';
         serverTestResult.classList.remove('hidden');
       }
-      const isHealthy = await checkServerHealth(target);
+      const isHealthy = await pingHealth(target);
       if (serverTestResult) {
         if (isHealthy) {
           serverTestResult.className = 'test-result-box success';
-          serverTestResult.textContent = '✓ Connected! Rivue API Engine is online & responding.';
+          serverTestResult.textContent = `✓ Connected! Server responded healthy at ${target || 'current host'}.`;
         } else {
           serverTestResult.className = 'test-result-box error';
-          serverTestResult.textContent = `✕ Unreachable at ${target || 'local endpoint'}. Ensure backend server is running.`;
+          serverTestResult.textContent = `✕ Unreachable at ${target || 'local endpoint'}. Ensure backend server or Cloudflare tunnel is active.`;
+        }
+      }
+    });
+  }
+
+  if (btnAutoDetect) {
+    btnAutoDetect.addEventListener('click', async () => {
+      if (serverTestResult) {
+        serverTestResult.className = 'test-result-box';
+        serverTestResult.textContent = 'Scanning available endpoints (Cloud, Wi-Fi, Local)...';
+        serverTestResult.classList.remove('hidden');
+      }
+      const best = await resolveActiveServer(true);
+      if (serverTestResult) {
+        if (best !== undefined) {
+          serverTestResult.className = 'test-result-box success';
+          serverTestResult.textContent = `✓ Auto-connected to: ${best || 'Active Host (Direct)'}`;
+        } else {
+          serverTestResult.className = 'test-result-box error';
+          serverTestResult.textContent = '✕ No endpoints responded. Check that backend server is running.';
         }
       }
     });
@@ -172,16 +245,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const target = (serverUrlInput.value || '').trim().replace(/\/$/, '');
       if (target) {
         localStorage.setItem('rivue_server_url', target);
+        activeApiBaseUrl = target;
       } else {
         localStorage.removeItem('rivue_server_url');
+        await resolveActiveServer(true);
       }
       serverModal.classList.add('hidden');
-      await checkServerHealth();
+      await resolveActiveServer();
     });
   }
 
-  // Initial health check on launch
-  checkServerHealth();
+  // Initial auto-discovery on launch
+  resolveActiveServer();
 
   // ==========================================================================
   // 3. CLIPBOARD INTEGRATION (CAPACITOR + WEB)
@@ -371,24 +446,56 @@ document.addEventListener('DOMContentLoaded', () => {
     resultsDashboard.style.pointerEvents = 'none';
 
     const animationPromise = run5SecondScanningAnimation();
-    const baseUrl = getApiBaseUrl();
 
-    const fetchPromise = fetch(`${baseUrl}/api/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, refresh: true })
-    }).then(async res => {
+    async function executeApiCall(targetBaseUrl) {
+      const endpoint = targetBaseUrl ? `${targetBaseUrl.replace(/\/$/, '')}/api/analyze` : '/api/analyze';
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, refresh: true })
+      });
       if (!res.ok) {
         const errJson = await res.json().catch(() => ({}));
         throw new Error(errJson.error || errJson.details || `Server responded with HTTP ${res.status}`);
       }
       return res.json();
-    }).catch(fetchErr => {
-      if (fetchErr.message && fetchErr.message.includes('Failed to fetch')) {
-        throw new Error(`Cannot reach backend server at ${baseUrl || 'local endpoint'}. Please tap "⚙️ Server" in the top bar to test or change server IP.`);
+    }
+
+    const fetchPromise = (async () => {
+      let currentBase = getApiBaseUrl();
+      try {
+        return await executeApiCall(currentBase);
+      } catch (primaryErr) {
+        console.warn(`Primary endpoint [${currentBase || 'origin'}] failed:`, primaryErr);
+
+        // Auto-Failover to Universal Cloud URL if primary failed
+        if (currentBase !== PUBLIC_CLOUD_URL) {
+          console.log(`Auto-Failover: Retrying analysis via Universal Cloud Server: ${PUBLIC_CLOUD_URL}`);
+          try {
+            const cloudData = await executeApiCall(PUBLIC_CLOUD_URL);
+            activeApiBaseUrl = PUBLIC_CLOUD_URL;
+            updateServerPillUI('online', 'Cloud Online');
+            return cloudData;
+          } catch (cloudErr) {
+            console.error('Universal Cloud retry also failed:', cloudErr);
+          }
+        }
+
+        // If even relative endpoint was bypassed and failed, try relative
+        if (currentBase && window.location.protocol.startsWith('http')) {
+          try {
+            const relData = await executeApiCall('');
+            activeApiBaseUrl = '';
+            updateServerPillUI('online', 'Online');
+            return relData;
+          } catch (relErr) {}
+        }
+
+        throw new Error(
+          `Cannot reach Rivue backend server. Please tap "⚙️ Server" in the top bar and select "Universal Cloud (Works Anywhere)" to connect instantly.`
+        );
       }
-      throw fetchErr;
-    });
+    })();
 
     try {
       const [_, data] = await Promise.all([animationPromise, fetchPromise]);

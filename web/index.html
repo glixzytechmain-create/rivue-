@@ -638,23 +638,25 @@
       <div class="modal-form-group">
         <label for="server-url-input">API Server Base URL:</label>
         <div class="modal-input-row">
-          <input type="text" id="server-url-input" placeholder="http://10.178.253.57:3001" spellcheck="false" autocomplete="off" />
+          <input type="text" id="server-url-input" placeholder="https://myth-subaru-following-understood.trycloudflare.com" spellcheck="false" autocomplete="off" />
         </div>
       </div>
 
       <div class="modal-presets">
         <span class="presets-label">Quick Presets:</span>
         <div class="preset-chips">
-          <button type="button" class="preset-chip" data-url="http://10.178.253.57:3001">💻 Mac Wi-Fi (10.178.253.57)</button>
+          <button type="button" class="preset-chip chip-cloud" data-url="https://myth-subaru-following-understood.trycloudflare.com">🌐 Universal Cloud (Works Anywhere)</button>
+          <button type="button" class="preset-chip" data-url="http://192.168.97.227:3001">💻 Local Wi-Fi (192.168.97.227)</button>
           <button type="button" class="preset-chip" data-url="http://10.0.2.2:3001">🤖 Emulator (10.0.2.2)</button>
-          <button type="button" class="preset-chip" data-url="http://localhost:3001">🌐 Localhost</button>
+          <button type="button" class="preset-chip" data-url="http://localhost:3001">🏠 Localhost</button>
         </div>
       </div>
 
       <div id="server-test-result" class="test-result-box hidden"></div>
 
       <div class="modal-actions">
-        <button id="btn-test-server" class="btn-secondary" type="button">⚡ Test Connection</button>
+        <button id="btn-auto-detect" class="btn-secondary" type="button">✨ Auto-Detect Server</button>
+        <button id="btn-test-server" class="btn-secondary" type="button">⚡ Test</button>
         <button id="btn-save-server" class="btn-primary" type="button">Save & Connect</button>
       </div>
     </div>
