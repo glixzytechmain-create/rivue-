@@ -75,6 +75,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   min-height: 100dvh;
+  padding-top: 76px;
   line-height: 1.55;
   letter-spacing: -0.01em;
   overflow-x: hidden;
@@ -158,16 +159,57 @@ body {
    KINETIC TAP RIPPLE & PHYSICAL SPRING BOUNCE
    ========================================================================== */
 
-button, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .btn-install-helper {
+button, a, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .sample-preset-pill, .btn-download-cyber, .btn-install-helper, .server-pill, .modal-close, .ext-download-btn, .btn-primary, .btn-secondary {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: transform 0.15s var(--spring-bounce), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.16s var(--spring-bounce), box-shadow 0.2s ease, filter 0.16s ease, background 0.2s ease, border-color 0.2s ease;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:active, .ftab:active, .preset-chip:active, .btn-download-cyber:active {
-  transform: scale(0.94) translateZ(0);
+/* Mechanical Button Compression on Click / Tap / Active */
+button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:active, .ftab:active, .preset-chip:active, .sample-preset-pill:active, .btn-download-cyber:active, .server-pill:active,
+.tap-pressed {
+  transform: scale(0.91) translateY(2px) !important;
+  filter: brightness(1.25) contrast(1.08) !important;
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.7), inset 0 0 14px rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Global Screen Tap Shockwave Layer (spawns under finger on ANY tap) */
+.tap-shockwave-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999999;
+  overflow: hidden;
+}
+
+.tap-shockwave {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.2);
+  border: 2px solid rgba(56, 189, 248, 0.95);
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.5) 0%, rgba(59, 130, 246, 0.25) 40%, transparent 70%);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.85), inset 0 0 15px rgba(56, 189, 248, 0.6);
+  animation: shockwaveExpand 0.42s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes shockwaveExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.8);
+    opacity: 0;
+  }
 }
 
 .ripple-wave {
@@ -175,26 +217,29 @@ button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:
   border-radius: 50%;
   pointer-events: none;
   transform: scale(0);
-  animation: rippleEffect 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(59, 130, 246, 0.4) 40%, transparent 75%);
+  animation: rippleEffect 0.55s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.75) 0%, rgba(56, 189, 248, 0.55) 45%, transparent 75%);
 }
 
 @keyframes rippleEffect {
-  0% { transform: scale(0); opacity: 0.8; }
-  100% { transform: scale(3.2); opacity: 0; }
+  0% { transform: scale(0); opacity: 0.9; }
+  100% { transform: scale(3.5); opacity: 0; }
 }
 
 /* ==========================================================================
-   SCROLL-DRIVEN DYNAMIC NAVIGATION BAR
+   PERMANENT FIXED NAVIGATION BAR (NEVER SCROLLED AWAY)
    ========================================================================== */
 
 .navbar {
-  position: sticky;
+  position: fixed !important;
   top: 0;
-  z-index: 99;
-  background: rgba(4, 6, 10, 0.7);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(4, 6, 10, 0.85);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
   border-bottom: 1px solid var(--border-subtle);
   padding-top: env(safe-area-inset-top);
   transition: padding 0.25s var(--spring-smooth), background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -202,11 +247,11 @@ button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:
 
 /* Scroll-Compressed State (Activated via JS) */
 .navbar.scrolled {
-  background: rgba(4, 6, 10, 0.92);
-  backdrop-filter: blur(32px) saturate(220%);
-  -webkit-backdrop-filter: blur(32px) saturate(220%);
+  background: rgba(4, 6, 10, 0.95);
+  backdrop-filter: blur(34px) saturate(220%);
+  -webkit-backdrop-filter: blur(34px) saturate(220%);
   border-bottom-color: var(--border-specular);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.9);
 }
 
 .navbar.scrolled .nav-container {
@@ -466,55 +511,101 @@ button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:
   box-shadow: 0 0 6px #38bdf8;
 }
 
-/* Kinetic Animated Hero Title */
+/* High-Impact Cinematic Hero Title */
 .hero-title {
-  font-size: clamp(32px, 5.2vw, 62px);
+  font-size: clamp(32px, 5.5vw, 64px);
   font-weight: 850;
   letter-spacing: -0.04em;
   line-height: 1.15;
-  max-width: 880px;
+  max-width: 900px;
   color: var(--text-pure);
+  text-align: center;
+  margin: 0 auto;
 }
 
-.kinetic-rotator-wrap {
-  display: inline-block;
-  position: relative;
-  vertical-align: bottom;
-  height: 1.25em;
-  min-width: 220px;
-  overflow: hidden;
-  text-align: left;
-}
-
-.rotator-track {
+.hero-flipper-box {
   display: block;
+  margin-top: 6px;
+  min-height: 1.25em;
   position: relative;
-  height: 100%;
 }
 
-.rotator-item {
-  position: absolute;
-  left: 0;
-  top: 0;
-  white-space: nowrap;
-  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #34d399 100%);
+.hero-flipper-text {
+  display: inline-block;
+  background: linear-gradient(135deg, #38bdf8 0%, #60a5fa 45%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  opacity: 0;
-  transform: translateY(100%);
-  transition: transform 0.45s var(--spring-smooth), opacity 0.35s ease;
-  pointer-events: none;
+  filter: drop-shadow(0 0 28px rgba(56, 189, 248, 0.45));
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+  will-change: transform, opacity;
 }
 
-.rotator-item.active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+.hero-flipper-text.flip-out {
+  opacity: 0;
+  transform: translateY(-26px) scale(0.95);
 }
 
-.rotator-item.exit {
+.hero-flipper-text.flip-in {
   opacity: 0;
-  transform: translateY(-100%);
+  transform: translateY(26px) scale(0.95);
+}
+
+/* 1-Tap Sample Presets for Instant Testing */
+.sample-presets-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.sample-presets-label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
+.sample-presets-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sample-preset-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.sample-preset-pill:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+}
+
+.preset-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
 }
 
 .hero-desc {
@@ -2393,22 +2484,37 @@ button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:
     gap: 12px;
   }
 
+  body {
+    padding-top: 66px;
+  }
+
   .hero-title {
-    font-size: 26px;
-    line-height: 1.22;
+    font-size: 27px;
+    line-height: 1.2;
   }
 
-  .kinetic-rotator-wrap {
-    display: block;
-    min-width: 0;
-    width: 100%;
-    text-align: center;
-    height: 1.3em;
+  .hero-flipper-box {
+    margin-top: 4px;
+    min-height: 1.2em;
   }
 
-  .rotator-item {
+  .hero-flipper-text {
+    font-size: 25px;
+  }
+
+  .sample-presets-wrap {
+    gap: 6px;
+  }
+
+  .sample-presets-label {
     width: 100%;
     text-align: center;
+    font-size: 10.5px;
+  }
+
+  .sample-preset-pill {
+    padding: 5px 11px;
+    font-size: 11.5px;
   }
 
   .hero-desc {

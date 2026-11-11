@@ -38,16 +38,45 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => ripple.remove(), 700);
   }
 
-  // Delegated universal tap ripple engine for all interactive elements & touch targets
-  document.addEventListener('pointerdown', (e) => {
-    const interactive = e.target.closest('button, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .server-pill, .btn-install-helper, .ext-download-btn, .btn-primary, .btn-secondary, .platform-action-btn, .pill-btn, .rev-item, .card');
+  // ==========================================================================
+  // 1. UNIVERSAL TACTILE TAP SYSTEM (SHOCKWAVE + MECHANICAL CRUNCH + HAPTICS)
+  // ==========================================================================
+  const shockwaveLayer = document.getElementById('tap-shockwave-layer');
+
+  function triggerGlobalShockwave(x, y) {
+    if (!shockwaveLayer) return;
+    const ring = document.createElement('span');
+    ring.className = 'tap-shockwave';
+    ring.style.left = `${x}px`;
+    ring.style.top = `${y}px`;
+    shockwaveLayer.appendChild(ring);
+    setTimeout(() => ring.remove(), 450);
+
+    // Physical haptic pulse on mobile devices
+    if (window.navigator && window.navigator.vibrate) {
+      try { window.navigator.vibrate(12); } catch (_) {}
+    }
+  }
+
+  // Pointerdown captures mouse, pen, and touch coordinates universally
+  window.addEventListener('pointerdown', (e) => {
+    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
+    const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+    triggerGlobalShockwave(clientX, clientY);
+
+    const interactive = e.target.closest('button, a, input, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .sample-preset-pill, .btn-download-cyber, .server-pill, .btn-install-helper, .ext-download-btn, .btn-primary, .btn-secondary, .card, .platform-glass-card');
     if (interactive && !interactive.disabled) {
+      // Mechanical compression locked for 180ms so human eye sees and feels it
+      interactive.classList.add('tap-pressed');
+      setTimeout(() => {
+        interactive.classList.remove('tap-pressed');
+      }, 180);
+
+      // In-element ripple wave
       const rect = interactive.getBoundingClientRect();
       const ripple = document.createElement('span');
       ripple.className = 'ripple-wave';
-      const size = Math.max(rect.width, rect.height) * 1.6;
-      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? (rect.left + rect.width / 2);
-      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? (rect.top + rect.height / 2);
+      const size = Math.max(rect.width, rect.height) * 2;
       const x = clientX - rect.left - size / 2;
       const y = clientY - rect.top - size / 2;
       ripple.style.width = `${size}px`;
@@ -55,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ripple.style.left = `${x}px`;
       ripple.style.top = `${y}px`;
       interactive.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 700);
+      setTimeout(() => ripple.remove(), 600);
     }
   }, { passive: true });
 
@@ -104,27 +133,45 @@ document.addEventListener('DOMContentLoaded', () => {
   handleScroll();
 
   // ==========================================================================
-  // KINETIC HERO WORD ROTATOR
+  // CINEMATIC HERO TEXT FLIPPER
   // ==========================================================================
-  const rotatorTrack = document.getElementById('rotator-track');
-  if (rotatorTrack) {
-    const items = rotatorTrack.querySelectorAll('.rotator-item');
-    if (items.length > 1) {
-      let activeIndex = 0;
-      setInterval(() => {
-        const currentItem = items[activeIndex];
-        currentItem.classList.remove('active');
-        currentItem.classList.add('exit');
-
-        setTimeout(() => {
-          currentItem.classList.remove('exit');
-        }, 550);
-
-        activeIndex = (activeIndex + 1) % items.length;
-        items[activeIndex].classList.add('active');
-      }, 2800);
-    }
+  const flippingPhrases = [
+    'Fake 5-Star Reviews.',
+    'Bot-Farm Ratings.',
+    'Sponsored Deceptions.',
+    'Manipulated Prices.',
+    'AI-Generated Praise.'
+  ];
+  let phraseIdx = 0;
+  const flipEl = document.getElementById('hero-flipping-phrase');
+  if (flipEl) {
+    setInterval(() => {
+      flipEl.classList.add('flip-out');
+      setTimeout(() => {
+        phraseIdx = (phraseIdx + 1) % flippingPhrases.length;
+        flipEl.textContent = flippingPhrases[phraseIdx];
+        flipEl.classList.remove('flip-out');
+        flipEl.classList.add('flip-in');
+        requestAnimationFrame(() => {
+          flipEl.classList.remove('flip-in');
+        });
+      }, 350);
+    }, 2800);
   }
+
+  // ==========================================================================
+  // 1-TAP SAMPLE PRESET QUICK AUDIT
+  // ==========================================================================
+  const samplePills = document.querySelectorAll('.sample-preset-pill');
+  samplePills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const targetUrl = pill.getAttribute('data-url');
+      if (targetUrl && inputUrl) {
+        inputUrl.value = targetUrl;
+        if (btnRun) btnRun.click();
+      }
+    });
+  });
   // 2. UNIVERSAL BACKEND SERVER CONNECTION MANAGEMENT & AUTO-DISCOVERY
   // ==========================================================================
   const PUBLIC_CLOUD_URL = 'https://myth-subaru-following-understood.trycloudflare.com';

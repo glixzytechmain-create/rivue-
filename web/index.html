@@ -11,6 +11,9 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 </head>
 <body>
+  <!-- Global Touch & Tap Shockwave Interaction Layer -->
+  <div id="tap-shockwave-layer" class="tap-shockwave-layer" aria-hidden="true"></div>
+
   <!-- Ambient Spatial Glow Elements -->
   <div class="ambient-glow-layer" aria-hidden="true">
     <div class="ambient-orb orb-violet"></div>
@@ -21,7 +24,7 @@
   <!-- Cybernetic Precision Micro-Grid -->
   <div class="cyber-grid-overlay" aria-hidden="true"></div>
 
-  <!-- Scroll-Animated Top Navigation Bar -->
+  <!-- Scroll-Animated Top Navigation Bar (Fixed Pinned) -->
   <header class="navbar" id="navbar">
     <div class="nav-container">
       <a href="#" class="brand" aria-label="Rivue Home">
@@ -80,25 +83,19 @@
     <section class="hero-section">
       <div class="hero-tag-badge">
         <span class="tag-pulse"></span>
-        <span class="tag-label">INDEPENDENT MARKETPLACE FORENSICS</span>
+        <span class="tag-label">NEURAL MARKETPLACE FORENSICS</span>
       </div>
 
-      <!-- Kinetic Animated Headline -->
+      <!-- High-Impact Cinematic Headline -->
       <h1 class="hero-title">
-        The truth behind
-        <span class="kinetic-rotator-wrap">
-          <span class="rotator-track" id="rotator-track">
-            <span class="rotator-item active">every review.</span>
-            <span class="rotator-item">bot syndicates.</span>
-            <span class="rotator-item">paid 5-stars.</span>
-            <span class="rotator-item">price markups.</span>
-            <span class="rotator-item">manipulation.</span>
-          </span>
+        Stop Falling For<br>
+        <span class="hero-flipper-box">
+          <span class="hero-flipper-text" id="hero-flipping-text">Fake 5-Star Reviews.</span>
         </span>
       </h1>
 
       <p class="hero-desc">
-        Algorithms manipulate product ratings every day. Rivue runs deep cross-network packet inspection to purge automated praise templates, expose fake review velocity, and calculate the authentic consensus.
+        Rivue strips away bot-farm praise, sponsored rating inflation, and manipulated reviews to reveal the unfiltered consensus of verified buyers.
       </p>
 
       <!-- Ergonomic Search & Inspection Capsule -->
@@ -136,6 +133,25 @@
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
               </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 1-Tap Sample Presets for Instant Testing -->
+        <div class="sample-presets-wrap">
+          <span class="sample-presets-label">Instant Test Presets:</span>
+          <div class="sample-presets-pills">
+            <button type="button" class="sample-preset-pill" data-url="https://www.amazon.com/dp/B09V3K4XYZ" title="SonicPulse ANC Earbuds (Amazon)">
+              <span class="preset-pill-dot"></span>
+              <span>🎧 SonicPulse Earbuds</span>
+            </button>
+            <button type="button" class="sample-preset-pill" data-url="https://www.flipkart.com/boat-airdopes-141/p/itm123456" title="boAt Airdopes 141 (Flipkart)">
+              <span class="preset-pill-dot"></span>
+              <span>⚡ boAt Airdopes</span>
+            </button>
+            <button type="button" class="sample-preset-pill" data-url="https://www.walmart.com/ip/onn-android-tv-4k/987654321" title="onn 4K Streaming Box (Walmart)">
+              <span class="preset-pill-dot"></span>
+              <span>📺 onn 4K Streamer</span>
             </button>
           </div>
         </div>
