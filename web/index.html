@@ -104,29 +104,31 @@
         <span class="tag-label">NEURAL DECEPTION FORENSICS // REALTIME MATRIX</span>
       </div>
 
-      <!-- Left & Right Floating 3D Telemetry HUD Cards -->
+      <!-- Left & Right Floating Telemetry HUD Cards (100% Real Diagnostics) -->
       <div class="hero-hud-float left-hud desktop-only" data-tilt>
         <div class="hud-f-header">
-          <span class="hud-dot-green"></span>
-          <span class="hud-mono">BURST DETECTION</span>
+          <span class="hud-dot-cyan"></span>
+          <span class="hud-mono">SUPPORTED PLATFORMS</span>
         </div>
-        <div class="hud-f-val">99.8%</div>
-        <div class="hud-f-sub">Bot Syndicate Catch Rate</div>
-        <div class="hud-sound-wave">
-          <i></i><i></i><i></i><i></i><i></i><i></i>
+        <div class="hud-f-val hud-targets-val">MULTI-STORE</div>
+        <div class="hud-f-sub">Amazon • Flipkart • Google Maps</div>
+        <div class="hud-platforms-strip">
+          <span class="hud-platform-tag">AMAZON</span>
+          <span class="hud-platform-tag">FLIPKART</span>
+          <span class="hud-platform-tag">MAPS</span>
         </div>
       </div>
 
-      <div class="hero-hud-float right-hud desktop-only" data-tilt>
+      <div class="hero-hud-float right-hud interactive-hud desktop-only" id="hero-hud-server" data-tilt title="Click to view server configuration">
         <div class="hud-f-header">
-          <span class="hud-dot-cyan"></span>
-          <span class="hud-mono">LIVE TELEMETRY</span>
+          <span class="hud-dot-green" id="hud-real-dot"></span>
+          <span class="hud-mono" id="hud-real-title">SERVER GATEWAY</span>
         </div>
-        <div class="hud-f-val" id="hud-live-audited">1,489,204</div>
-        <div class="hud-f-sub">Reviews Audited Today</div>
-        <div class="hud-latency-pill">
-          <span class="latency-dot"></span>
-          <span>14ms • TOKYO-01</span>
+        <div class="hud-f-val hud-val-real" id="hud-real-status">ONLINE</div>
+        <div class="hud-f-sub" id="hud-real-sub">Backend & AI Scraper Ready</div>
+        <div class="hud-latency-pill" id="hud-real-pill">
+          <span class="latency-dot" id="hud-real-latency-dot"></span>
+          <span id="hud-real-latency-val">Pinging...</span>
         </div>
       </div>
 

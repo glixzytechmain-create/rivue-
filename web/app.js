@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let activeFilter = 'all';
 
   // ==========================================================================
-  // 1. MAXIMALIST GPU TAP PARTICLE SUPERNOVA & SHOCKWAVE ENGINE
+  // ==========================================================================
+  // 1. ULTRA-LIGHTWEIGHT, GPU-EFFICIENT TAP HOLO-BURST ENGINE (ZERO-PRESSURE)
   // ==========================================================================
   const tapCanvas = document.getElementById('tap-fx-canvas');
   let tapCtx = null;
@@ -29,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function resizeTapCanvas() {
     if (!tapCanvas) return;
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2 to prevent GPU memory pressure
     tapWidth = window.innerWidth;
     tapHeight = window.innerHeight;
     tapCanvas.width = tapWidth * dpr;
@@ -40,57 +41,36 @@ document.addEventListener('DOMContentLoaded', () => {
   resizeTapCanvas();
   window.addEventListener('resize', resizeTapCanvas);
 
-  const SPARK_COLORS = ['#38bdf8', '#06b6d4', '#60a5fa', '#a855f7', '#ec4899', '#ffffff', '#fbbf24'];
+  const SPARK_COLORS = ['#38bdf8', '#818cf8', '#06b6d4', '#a855f7', '#ffffff'];
 
   function spawnTapSupernova(x, y) {
     if (!tapCtx) return;
 
-    // 1. Dual Shockwave Rings
+    // 1. Single sleek holographic laser expanding ring (Zero shadowBlur, ultra-fast)
     activeShockwaves.push({
       x, y,
-      radius: 5,
-      maxRadius: 130,
+      radius: 4,
+      maxRadius: 52,
       color: '#38bdf8',
-      alpha: 1,
-      speed: 14,
-      lineWidth: 3.5
-    });
-
-    activeShockwaves.push({
-      x, y,
-      radius: 0,
-      maxRadius: 190,
-      color: '#a855f7',
-      alpha: 0.85,
-      speed: 10,
+      alpha: 0.9,
+      speed: 4.5,
       lineWidth: 2
     });
 
-    // 2. 26 Physics-driven Sparks
-    const count = 26;
+    // 2. 8 Kinetic Starlight Sparks (Smooth, lightweight physics)
+    const count = 8;
     for (let i = 0; i < count; i++) {
-      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
-      const speed = 4 + Math.random() * 11;
+      const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.35;
+      const speed = 2.5 + Math.random() * 5.5;
       activeParticles.push({
         x, y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        color: SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)],
-        size: 2.5 + Math.random() * 3,
+        color: SPARK_COLORS[i % SPARK_COLORS.length],
+        size: 1.8 + Math.random() * 1.5,
         life: 1,
-        decay: 0.025 + Math.random() * 0.03,
-        trail: []
+        decay: 0.05 + Math.random() * 0.03
       });
-    }
-
-    // 3. Screen micro-quake & haptic punch
-    document.body.classList.remove('screen-micro-quake');
-    void document.body.offsetWidth;
-    document.body.classList.add('screen-micro-quake');
-    setTimeout(() => document.body.classList.remove('screen-micro-quake'), 150);
-
-    if (window.navigator && window.navigator.vibrate) {
-      try { window.navigator.vibrate([20, 35, 20]); } catch (_) {}
     }
 
     if (!isFxLoopRunning) {
@@ -102,9 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderTapFx() {
     if (!tapCtx) return;
     tapCtx.clearRect(0, 0, tapWidth, tapHeight);
-    tapCtx.globalCompositeOperation = 'lighter';
 
-    // Render Shockwaves
+    // Render Laser Shockwave
     for (let i = activeShockwaves.length - 1; i >= 0; i--) {
       const sw = activeShockwaves[i];
       sw.radius += sw.speed;
@@ -115,29 +94,21 @@ document.addEventListener('DOMContentLoaded', () => {
         continue;
       }
 
-      tapCtx.save();
       tapCtx.beginPath();
       tapCtx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
       tapCtx.strokeStyle = sw.color;
-      tapCtx.lineWidth = sw.lineWidth * sw.alpha;
+      tapCtx.lineWidth = sw.lineWidth * Math.max(0, sw.alpha);
       tapCtx.globalAlpha = Math.max(0, sw.alpha);
-      tapCtx.shadowColor = sw.color;
-      tapCtx.shadowBlur = 18;
       tapCtx.stroke();
-      tapCtx.restore();
     }
 
-    // Render Particles
+    // Render Sparks
     for (let i = activeParticles.length - 1; i >= 0; i--) {
       const p = activeParticles[i];
-      p.trail.push({ x: p.x, y: p.y });
-      if (p.trail.length > 5) p.trail.shift();
-
       p.x += p.vx;
       p.y += p.vy;
-      p.vx *= 0.94;
-      p.vy *= 0.94;
-      p.vy += 0.22;
+      p.vx *= 0.92;
+      p.vy *= 0.92;
       p.life -= p.decay;
 
       if (p.life <= 0) {
@@ -145,30 +116,14 @@ document.addEventListener('DOMContentLoaded', () => {
         continue;
       }
 
-      tapCtx.save();
-      if (p.trail.length > 1) {
-        tapCtx.beginPath();
-        tapCtx.moveTo(p.trail[0].x, p.trail[0].y);
-        for (let t = 1; t < p.trail.length; t++) {
-          tapCtx.lineTo(p.trail[t].x, p.trail[t].y);
-        }
-        tapCtx.strokeStyle = p.color;
-        tapCtx.lineWidth = p.size * 0.7 * p.life;
-        tapCtx.globalAlpha = p.life * 0.6;
-        tapCtx.shadowColor = p.color;
-        tapCtx.shadowBlur = 8;
-        tapCtx.stroke();
-      }
-
       tapCtx.beginPath();
       tapCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
       tapCtx.fillStyle = p.color;
-      tapCtx.globalAlpha = p.life;
-      tapCtx.shadowColor = p.color;
-      tapCtx.shadowBlur = 14;
+      tapCtx.globalAlpha = Math.max(0, p.life);
       tapCtx.fill();
-      tapCtx.restore();
     }
+
+    tapCtx.globalAlpha = 1;
 
     if (activeParticles.length > 0 || activeShockwaves.length > 0) {
       requestAnimationFrame(renderTapFx);
@@ -178,31 +133,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Pointerdown captures mouse, pen, and touch coordinates universally
+  // Pointerdown captures mouse, pen, and touch coordinates cleanly without side-effects
+  let lastTapTime = 0;
+  let lastTapX = -999;
+  let lastTapY = -999;
+
   window.addEventListener('pointerdown', (e) => {
+    // 1. Only respond to primary touch/pointer (ignore multi-touch secondary fingers)
+    if (e.isPrimary === false) return;
+
+    const now = performance.now();
     const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? 0;
     const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? 0;
+
+    // 2. Debounce duplicate synthetic events (within 75ms and 15px radius)
+    if (now - lastTapTime < 75 && Math.hypot(clientX - lastTapX, clientY - lastTapY) < 15) {
+      return;
+    }
+    lastTapTime = now;
+    lastTapX = clientX;
+    lastTapY = clientY;
+
+    // 3. Spawn pure visual tap overlay on GPU canvas (NO DOM side effects)
     spawnTapSupernova(clientX, clientY);
 
-    const interactive = e.target.closest('button, a, input, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .server-pill, .btn-install-helper, .ext-download-btn, .btn-primary, .btn-secondary, .card, .platform-glass-card');
+    // 4. Subtle mechanical compression strictly on interactive buttons
+    const interactive = e.target.closest('button, a, input, select, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .server-pill, .btn-install-helper, .ext-download-btn, .btn-primary, .btn-secondary');
     if (interactive && !interactive.disabled) {
       interactive.classList.add('tap-pressed');
-      setTimeout(() => {
-        interactive.classList.remove('tap-pressed');
-      }, 180);
+      setTimeout(() => interactive.classList.remove('tap-pressed'), 110);
 
-      const rect = interactive.getBoundingClientRect();
-      const ripple = document.createElement('span');
-      ripple.className = 'ripple-wave';
-      const size = Math.max(rect.width, rect.height) * 2;
-      const x = clientX - rect.left - size / 2;
-      const y = clientY - rect.top - size / 2;
-      ripple.style.width = `${size}px`;
-      ripple.style.height = `${size}px`;
-      ripple.style.left = `${x}px`;
-      ripple.style.top = `${y}px`;
-      interactive.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 550);
+      // Single crisp micro-tick vibration on supported mobile devices
+      if (window.navigator && window.navigator.vibrate) {
+        try { window.navigator.vibrate(8); } catch (_) {}
+      }
     }
   }, { passive: true });
 
@@ -296,12 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
           n.y += (dy / distToMouse) * 0.6;
         }
 
-        // Draw node
+        // Draw node (Zero shadowBlur for maximum 60/120fps smoothness)
         hctx.beginPath();
         hctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-        hctx.fillStyle = n.baseColor + '0.6)';
-        hctx.shadowColor = '#38bdf8';
-        hctx.shadowBlur = 6;
+        hctx.fillStyle = n.baseColor + '0.75)';
         hctx.fill();
 
         // Connect nearby nodes
@@ -316,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
             hctx.lineTo(n2.x, n2.y);
             hctx.strokeStyle = `rgba(56, 189, 248, ${0.18 * (1 - ndist / 95)})`;
             hctx.lineWidth = 0.8;
-            hctx.shadowBlur = 0;
             hctx.stroke();
           }
         }
@@ -328,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
-  // 3. LIVE UTC CLOCK & REALTIME TELEMETRY COUNTER
+  // 3. LIVE UTC CLOCK & 100% REALTIME SERVER TELEMETRY
   // ==========================================================================
   const navClock = document.getElementById('nav-clock');
   function updateNavClock() {
@@ -343,14 +304,65 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateNavClock, 1000);
   updateNavClock();
 
-  const auditedCountEl = document.getElementById('hud-live-audited');
-  let currentAudited = 1489204;
-  setInterval(() => {
-    currentAudited += Math.floor(Math.random() * 4) + 1;
-    if (auditedCountEl) {
-      auditedCountEl.textContent = currentAudited.toLocaleString();
+  // Real-Time Server Health & Latency Telemetry
+  const hudRealStatus = document.getElementById('hud-real-status');
+  const hudRealSub = document.getElementById('hud-real-sub');
+  const hudRealLatencyVal = document.getElementById('hud-real-latency-val');
+  const hudRealDot = document.getElementById('hud-real-dot');
+  const hudRealLatencyDot = document.getElementById('hud-real-latency-dot');
+  const heroHudServer = document.getElementById('hero-hud-server');
+
+  async function updateRealServerTelemetry() {
+    const start = performance.now();
+    try {
+      const serverUrl = window.RivueServer?.getServerUrl() || '';
+      const targetUrl = serverUrl ? `${serverUrl.replace(/\/$/, '')}/api/health` : '/api/health';
+      const res = await fetch(targetUrl, { cache: 'no-store' });
+      const elapsed = Math.round(performance.now() - start);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (hudRealStatus) {
+          hudRealStatus.textContent = 'ONLINE';
+          hudRealStatus.style.color = '#38bdf8';
+        }
+        if (hudRealSub) {
+          hudRealSub.textContent = data.scraperApiConfigured ? 'Scraper API & AI Heuristics Active' : 'Forensic AI Core Ready';
+        }
+        if (hudRealLatencyVal) {
+          const displayHost = serverUrl ? serverUrl.replace(/^https?:\/\//, '').split('/')[0] : 'PORT 3001';
+          hudRealLatencyVal.textContent = `${elapsed}ms • ${displayHost}`;
+        }
+        if (hudRealDot) hudRealDot.style.background = '#10b981';
+        if (hudRealLatencyDot) hudRealLatencyDot.style.background = '#10b981';
+      } else {
+        throw new Error('Unhealthy status');
+      }
+    } catch (_) {
+      if (hudRealStatus) {
+        hudRealStatus.textContent = 'STANDBY';
+        hudRealStatus.style.color = '#f59e0b';
+      }
+      if (hudRealSub) {
+        hudRealSub.textContent = 'Local Mode • Connect Server';
+      }
+      if (hudRealLatencyVal) {
+        hudRealLatencyVal.textContent = 'OFFLINE • Tap to configure';
+      }
+      if (hudRealDot) hudRealDot.style.background = '#f59e0b';
+      if (hudRealLatencyDot) hudRealLatencyDot.style.background = '#f59e0b';
     }
-  }, 3200);
+  }
+
+  updateRealServerTelemetry();
+  setInterval(updateRealServerTelemetry, 8000);
+
+  if (heroHudServer) {
+    heroHudServer.addEventListener('click', () => {
+      openServerModal();
+      updateRealServerTelemetry();
+    });
+  }
 
   // ==========================================================================
   // 4. MARKETPLACE PROTOCOL REALTIME DETECTION ON URL
@@ -1185,4 +1197,73 @@ document.addEventListener('DOMContentLoaded', () => {
       container.appendChild(div);
     });
   }
+
+  // ==========================================================================
+  // 9. NATIVE ANDROID & SYSTEM-BROWSER UNIVERSAL DOWNLOAD DISPATCHER
+  // (Fixes silent download failure inside Capacitor APK WebView)
+  // ==========================================================================
+  function setupDownloadInterception() {
+    const downloadLinks = document.querySelectorAll('a[href*="Rivue-Chrome-Extension.zip"], a[href*="rivue-latest.apk"], .btn-download-cyber, .ext-download-btn');
+
+    downloadLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href') || '';
+        if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+        const isApk = href.toLowerCase().includes('.apk');
+        const isZip = href.toLowerCase().includes('.zip');
+        if (!isApk && !isZip) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const fileName = isApk ? 'rivue-latest.apk' : 'Rivue-Chrome-Extension.zip';
+        const relativePath = isApk ? 'downloads/rivue-latest.apk' : 'downloads/Rivue-Chrome-Extension.zip';
+
+        // 1. Resolve reachable download host
+        let targetHost = (window.RivueServer?.getServerUrl() || '').trim();
+        const isCapacitor = Boolean(
+          window.Capacitor?.isNativePlatform?.() ||
+          window.location.protocol.startsWith('capacitor') ||
+          window.location.protocol.startsWith('file')
+        );
+
+        if (!targetHost || targetHost.includes('localhost') || targetHost.includes('127.0.0.1')) {
+          if (isCapacitor) {
+            targetHost = 'https://myth-subaru-following-understood.trycloudflare.com';
+          } else {
+            targetHost = window.location.origin;
+          }
+        }
+
+        const absoluteUrl = `${targetHost.replace(/\/$/, '')}/${relativePath}`;
+
+        if (isCapacitor) {
+          // Open via system browser so Android DownloadManager downloads the file directly
+          if (window.Capacitor?.Plugins?.Browser?.open) {
+            window.Capacitor.Plugins.Browser.open({ url: absoluteUrl });
+          } else {
+            window.open(absoluteUrl, '_system');
+          }
+          if (typeof showScanBanner === 'function') {
+            showScanBanner(`📥 Starting download: ${fileName}. Check notifications or Downloads folder!`, 'info');
+          }
+        } else {
+          // Normal desktop/mobile browser
+          const tempA = document.createElement('a');
+          tempA.href = absoluteUrl;
+          tempA.download = fileName;
+          tempA.target = '_blank';
+          document.body.appendChild(tempA);
+          tempA.click();
+          setTimeout(() => tempA.remove(), 100);
+          if (typeof showScanBanner === 'function') {
+            showScanBanner(`📥 Downloading ${fileName}...`, 'info');
+          }
+        }
+      });
+    });
+  }
+
+  setupDownloadInterception();
 });

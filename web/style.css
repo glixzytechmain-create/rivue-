@@ -169,54 +169,25 @@ body {
   z-index: 99999999;
 }
 
-@keyframes microQuake {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(-1.5px, 1px) rotate(-0.15deg); }
-  50% { transform: translate(1.5px, -1px) rotate(0.15deg); }
-  75% { transform: translate(-0.8px, 0.5px); }
-  100% { transform: translate(0, 0); }
-}
-
-body.screen-micro-quake {
-  animation: microQuake 0.14s ease-out;
-}
-
-button, a, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .btn-install-helper, .server-pill, .modal-close, .ext-download-btn, .btn-primary, .btn-secondary, .card, .platform-glass-card {
+/* Streamlined, GPU-Accelerated Tactile Response (Zero Main-Thread Pressure) */
+button, a, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .btn-install-helper, .server-pill, .modal-close, .ext-download-btn, .btn-primary, .btn-secondary {
   cursor: pointer;
   position: relative;
-  overflow: hidden;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease, filter 0.14s ease, border-color 0.18s ease;
+  transition: transform 0.09s ease-out, border-color 0.14s ease, box-shadow 0.14s ease;
 }
 
-/* Maximalist Explosive Mechanical Compression with Neon Ignition */
-button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:active, .ftab:active, .preset-chip:active, .btn-download-cyber:active, .server-pill:active,
+/* Snappy, Clean Tactile Compression (Zero Lag, No Layout Distortion) */
+button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:active, .ftab:active, .btn-download-cyber:active, .server-pill:active,
 .tap-pressed {
-  transform: scale(0.88) translateY(3px) perspective(600px) rotateX(3deg) !important;
-  filter: brightness(1.35) contrast(1.15) !important;
-  box-shadow: 0 0 35px #38bdf8, 0 0 70px rgba(59, 130, 246, 0.6), inset 0 0 16px rgba(255, 255, 255, 0.5) !important;
+  transform: scale(0.96) !important;
   border-color: #38bdf8 !important;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45) !important;
 }
-
-.ripple-wave {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: scale(0);
-  animation: rippleEffect 0.5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(56, 189, 248, 0.6) 40%, rgba(129, 140, 248, 0.3) 65%, transparent 80%);
-}
-
-@keyframes rippleEffect {
-  0% { transform: scale(0); opacity: 1; }
-  100% { transform: scale(4.2); opacity: 0; }
-}
-
-
 
 /* ==========================================================================
-   PERMANENT FIXED NAVIGATION BAR (NEVER SCROLLED AWAY)
+   PERMANENT FIXED NAVIGATION BAR (GPU-ISOLATED & ZERO FLICKER)
    ========================================================================== */
 
 .navbar {
@@ -231,6 +202,11 @@ button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:
   -webkit-backdrop-filter: blur(28px) saturate(200%);
   border-bottom: 1px solid var(--border-subtle);
   padding-top: env(safe-area-inset-top);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   transition: padding 0.25s var(--spring-smooth), background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
@@ -653,6 +629,49 @@ button:active, .nav-pill:active, .btn-capsule-submit:active, .btn-capsule-paste:
   color: #38bdf8;
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+
+.hero-hud-float.interactive-hud {
+  pointer-events: auto !important;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-hud-float.interactive-hud:hover {
+  border-color: rgba(56, 189, 248, 0.6);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(56, 189, 248, 0.3);
+}
+
+.hud-val-real {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #38bdf8;
+}
+
+.hud-targets-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: #a855f7;
+  letter-spacing: 0.05em;
+}
+
+.hud-platforms-strip {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.hud-platform-tag {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #7dd3fc;
+  letter-spacing: 0.04em;
 }
 
 .hud-f-sub {
