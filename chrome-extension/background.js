@@ -1,5 +1,6 @@
 // Rivue Background Service Worker (Manifest V3)
-const DEFAULT_API_BASE = 'http://localhost:3001';
+const DEFAULT_API_BASE = 'https://myth-subaru-following-understood.trycloudflare.com';
+const LOCAL_API_BASE = 'http://localhost:3001';
 
 // Setup Context Menu on installation
 chrome.runtime.onInstalled.addListener(() => {
@@ -59,28 +60,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
  */
 async function handleAnalyzeUrl(url, refresh = true, pageData = null) {
   const { apiBase } = await chrome.storage.local.get(['apiBase']);
-  const endpoint = `${apiBase || DEFAULT_API_BASE}/api/analyze`;
+  const primaryEndpoint = `${apiBase || DEFAULT_API_BASE}/api/analyze`;
+  const fallbackEndpoint = `${LOCAL_API_BASE}/api/analyze`;
 
-  try {
-    const res = await fetch(endpoint, {
+  async function callApi(ep) {
+    const res = await fetch(ep, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ url, refresh, pageData })
     });
-
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       throw new Error(errorData.error || `Server responded with ${res.status}`);
     }
+    return res.json();
+  }
 
-    const data = await res.json();
-    // Cache latest result in extension storage
+  try {
+    const data = await callApi(primaryEndpoint);
     await chrome.storage.local.set({ latestAnalysis: data, activeTargetUrl: url });
     return data;
   } catch (err) {
-    console.warn('[Rivue] Backend fetch failed, falling back to local heuristic analyzer:', err);
-    // Fallback heuristic if local server is not running
-    return generateLocalFallbackReport(url);
+    console.warn('[Rivue] Primary fetch failed, attempting local fallback:', err);
+    try {
+      const data = await callApi(fallbackEndpoint);
+      await chrome.storage.local.set({ latestAnalysis: data, activeTargetUrl: url });
+      return data;
+    } catch (fallbackErr) {
+      console.warn('[Rivue] All backend endpoints failed, generating local heuristic report:', fallbackErr);
+      return generateLocalFallbackReport(url);
+    }
   }
 }
 

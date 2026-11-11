@@ -38,11 +38,26 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => ripple.remove(), 700);
   }
 
-  // Bind ripple to all interactive controls
-  const rippleTargets = document.querySelectorAll('button, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .server-pill');
-  rippleTargets.forEach(el => {
-    el.addEventListener('pointerdown', createRipple);
-  });
+  // Delegated universal tap ripple engine for all interactive elements & touch targets
+  document.addEventListener('pointerdown', (e) => {
+    const interactive = e.target.closest('button, .nav-pill, .btn-capsule-submit, .btn-capsule-paste, .ftab, .preset-chip, .btn-download-cyber, .server-pill, .btn-install-helper, .ext-download-btn, .btn-primary, .btn-secondary, .platform-action-btn, .pill-btn, .rev-item, .card');
+    if (interactive && !interactive.disabled) {
+      const rect = interactive.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple-wave';
+      const size = Math.max(rect.width, rect.height) * 1.6;
+      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX) ?? (rect.left + rect.width / 2);
+      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY) ?? (rect.top + rect.height / 2);
+      const x = clientX - rect.left - size / 2;
+      const y = clientY - rect.top - size / 2;
+      ripple.style.width = `${size}px`;
+      ripple.style.height = `${size}px`;
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      interactive.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 700);
+    }
+  }, { passive: true });
 
   // Specular Cursor Spotlight tracking across cards
   const cards = document.querySelectorAll('.card, .platform-glass-card');
@@ -57,7 +72,59 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ==========================================================================
+  // SCROLL-DRIVEN HEADER COMPRESSION & PROGRESS BAR
   // ==========================================================================
+  const navbar = document.getElementById('navbar');
+  const scrollProgress = document.getElementById('scroll-progress');
+  let ticking = false;
+
+  function handleScroll() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    if (navbar) {
+      if (scrollY > 15) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    }
+    if (scrollProgress) {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+      scrollProgress.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(handleScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+  handleScroll();
+
+  // ==========================================================================
+  // KINETIC HERO WORD ROTATOR
+  // ==========================================================================
+  const rotatorTrack = document.getElementById('rotator-track');
+  if (rotatorTrack) {
+    const items = rotatorTrack.querySelectorAll('.rotator-item');
+    if (items.length > 1) {
+      let activeIndex = 0;
+      setInterval(() => {
+        const currentItem = items[activeIndex];
+        currentItem.classList.remove('active');
+        currentItem.classList.add('exit');
+
+        setTimeout(() => {
+          currentItem.classList.remove('exit');
+        }, 550);
+
+        activeIndex = (activeIndex + 1) % items.length;
+        items[activeIndex].classList.add('active');
+      }, 2800);
+    }
+  }
   // 2. UNIVERSAL BACKEND SERVER CONNECTION MANAGEMENT & AUTO-DISCOVERY
   // ==========================================================================
   const PUBLIC_CLOUD_URL = 'https://myth-subaru-following-understood.trycloudflare.com';
@@ -182,12 +249,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const modalBackdrop = document.querySelector('.modal-backdrop-blur');
-  if (modalBackdrop) {
-    modalBackdrop.addEventListener('click', () => {
-      serverModal.classList.add('hidden');
-    });
+  // Chrome Extension Modal Controls
+  const extModal = document.getElementById('extension-modal');
+  const btnOpenExtModal = document.getElementById('btn-open-ext-modal');
+  const btnOpenExtGuide = document.getElementById('btn-open-ext-guide');
+  const btnCloseExtModal = document.getElementById('btn-close-ext-modal');
+  const btnDismissExtModal = document.getElementById('btn-dismiss-ext-modal');
+
+  function openExtModal() {
+    if (extModal) extModal.classList.remove('hidden');
   }
+  function closeExtModal() {
+    if (extModal) extModal.classList.add('hidden');
+  }
+
+  if (btnOpenExtModal) btnOpenExtModal.addEventListener('click', openExtModal);
+  if (btnOpenExtGuide) btnOpenExtGuide.addEventListener('click', openExtModal);
+  if (btnCloseExtModal) btnCloseExtModal.addEventListener('click', closeExtModal);
+  if (btnDismissExtModal) btnDismissExtModal.addEventListener('click', closeExtModal);
+
+  // Close modals when clicking outside / on backdrop
+  document.querySelectorAll('.modal-overlay').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal || e.target.classList.contains('modal-backdrop-blur')) {
+        modal.classList.add('hidden');
+      }
+    });
+  });
 
   presetChips.forEach(chip => {
     chip.addEventListener('click', () => {

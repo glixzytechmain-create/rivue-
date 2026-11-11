@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Rivue — Cyber-Forensic Review & Trust Intelligence Console</title>
+  <title>Rivue — Independent Marketplace Forensics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -21,121 +21,166 @@
   <!-- Cybernetic Precision Micro-Grid -->
   <div class="cyber-grid-overlay" aria-hidden="true"></div>
 
-  <!-- Top Navigation Bar -->
-  <header class="navbar">
+  <!-- Scroll-Animated Top Navigation Bar -->
+  <header class="navbar" id="navbar">
     <div class="nav-container">
-      <div class="brand">
+      <a href="#" class="brand" aria-label="Rivue Home">
         <div class="shield-badge">
-          <span class="shield-icon">🛡️</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="brand-shield-svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
           <span class="shield-pulse"></span>
         </div>
         <div class="brand-info">
-          <span class="brand-text">Rivue</span>
-          <span class="brand-sub">FORENSIC CORE v2.4</span>
+          <span class="brand-text">RIVUE</span>
+          <span class="brand-sub">FORENSIC ENGINE v2.4</span>
         </div>
-        <div class="telemetry-pill">
-          <span class="telemetry-dot"></span>
-          <span>LIVE DEPLOYMENT</span>
-        </div>
+      </a>
+
+      <div class="nav-telemetry-badge">
+        <span class="telemetry-dot"></span>
+        <span class="telemetry-text">CLOUD AUDIT CORE ACTIVE</span>
       </div>
 
       <nav class="nav-links">
-        <a href="#analyzer" class="nav-link">Scanner</a>
-        <a href="#how-it-works" class="nav-link">Intelligence</a>
+        <a href="#analyzer" class="nav-link desktop-only">Scanner</a>
+        <a href="#how-it-works" class="nav-link desktop-only">Platform</a>
+        
+        <!-- Extension Button (Opens 3-Step Install Guide) -->
+        <button id="btn-open-ext-modal" class="nav-pill ext-pill" type="button" title="Chrome Extension Setup">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          <span class="pill-label">Extension</span>
+        </button>
+
+        <!-- Android APK Download -->
         <a href="downloads/rivue-latest.apk" class="nav-pill apk-pill" download title="Download Android APK">
-          <span class="nav-pill-icon">📱</span>
-          <span class="nav-pill-text">Android APK</span>
-          <span class="nav-pill-sparkle"></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+          <span class="pill-label">APK</span>
         </a>
-        <a href="downloads/Rivue-Chrome-Extension.zip" class="nav-pill ext-pill" download title="Download Chrome Extension">
-          <span class="nav-pill-icon">🧩</span>
-          <span class="nav-pill-text">Extension</span>
-        </a>
-        <button id="btn-server-settings" class="server-pill" type="button" title="Configure Backend API Server">
+
+        <!-- Server Settings Modal Trigger -->
+        <button id="btn-server-settings" class="server-pill" type="button" title="Configure Backend Server">
           <span class="server-indicator" id="server-status-dot"></span>
-          <span id="server-status-text">Server</span>
+          <span id="server-status-text" class="server-text">Server</span>
         </button>
       </nav>
     </div>
+
+    <!-- Scroll Progress Line -->
+    <div id="scroll-progress" class="scroll-progress-line" aria-hidden="true"></div>
   </header>
 
   <main class="main-content">
     <!-- Hero Forensics Section -->
     <section class="hero-section">
-      <div class="hero-chip">
-        <span class="chip-glow"></span>
-        <span class="chip-icon">⚡</span>
-        <span>RESIDENTIAL PROXY INSPECTION ENGINE</span>
+      <div class="hero-tag-badge">
+        <span class="tag-pulse"></span>
+        <span class="tag-label">INDEPENDENT MARKETPLACE FORENSICS</span>
       </div>
 
+      <!-- Kinetic Animated Headline -->
       <h1 class="hero-title">
-        Exposing <span class="gradient-shimmer">counterfeit reviews</span> with cyber-forensic precision.
+        The truth behind
+        <span class="kinetic-rotator-wrap">
+          <span class="rotator-track" id="rotator-track">
+            <span class="rotator-item active">every review.</span>
+            <span class="rotator-item">bot syndicates.</span>
+            <span class="rotator-item">paid 5-stars.</span>
+            <span class="rotator-item">price markups.</span>
+            <span class="rotator-item">manipulation.</span>
+          </span>
+        </span>
       </h1>
 
       <p class="hero-desc">
-        Rivue bypasses e-commerce anti-bot walls via residential proxies, exposes syndicated 5-star review farms, unmasks AI-generated praise templates, and calculates the true uncorrupted product rating.
+        Algorithms manipulate product ratings every day. Rivue runs deep cross-network packet inspection to purge automated praise templates, expose fake review velocity, and calculate the authentic consensus.
       </p>
 
-      <!-- Search & Inspection Capsule -->
+      <!-- Ergonomic Search & Inspection Capsule -->
       <div class="analyzer-capsule-wrap" id="analyzer">
         <div class="analyzer-capsule">
-          <div class="input-prefix-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
+          <div class="capsule-input-row">
+            <div class="input-prefix-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <input 
+              type="url" 
+              id="product-url" 
+              placeholder="Paste Amazon, Flipkart, Walmart or any URL..." 
+              autocomplete="off" 
+              spellcheck="false" 
+              autofocus 
+            />
           </div>
-          <input 
-            type="url" 
-            id="product-url" 
-            placeholder="Paste any Amazon, Flipkart, Walmart product link or any URL..." 
-            autocomplete="off" 
-            spellcheck="false" 
-            autofocus 
-          />
-          <button id="btn-paste-url" class="btn-capsule-paste" type="button" title="Read link from clipboard">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-            </svg>
-            <span>Paste</span>
-          </button>
-          <button id="btn-run-analysis" class="btn-capsule-submit" type="button">
-            <span>Analyze Forensics</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
+
+          <div class="capsule-actions-row">
+            <button id="btn-paste-url" class="btn-capsule-paste" type="button" title="Paste link from clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+              <span>Paste</span>
+            </button>
+
+            <button id="btn-run-analysis" class="btn-capsule-submit" type="button">
+              <span>Inspect Reviews</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div class="capsule-subtext">
-          <span class="subtext-item">🛡️ Universal URL Scraper</span>
+          <span class="subtext-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Universal Marketplace Parser
+          </span>
           <span class="subtext-dot">•</span>
-          <span class="subtext-item">⚡ 5-Phase ScraperAPI Pipeline</span>
+          <span class="subtext-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            5-Phase Residential Pipeline
+          </span>
           <span class="subtext-dot">•</span>
-          <span class="subtext-item">🤖 Neural Sentiment Verification</span>
+          <span class="subtext-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+            90-Day Worth-It Valuation
+          </span>
         </div>
 
         <div id="error-banner" class="error-banner hidden">
           <div class="error-glow"></div>
-          <span class="error-icon">⚠️</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="error-icon-svg">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
           <span id="error-banner-text">Error message</span>
         </div>
       </div>
     </section>
 
-    <!-- Holographic Forensic Radar Scanner 2.0 -->
+    <!-- Holographic Forensic Radar Scanner -->
     <div id="loading-overlay" class="forensic-scanner-overlay hidden">
       <div class="scanner-card">
         <div class="scanner-header-bar">
           <div class="scanner-signal-badge">
             <span class="pulse-beacon"></span>
-            <span>FORENSIC TELEMETRY STREAM</span>
+            <span>TELEMETRY STREAM</span>
           </div>
-          <span class="scanner-session-id">TLS_ROTATION_ESTABLISHED</span>
+          <span class="scanner-session-id">INSPECTING_BURST_CLUSTERS</span>
         </div>
 
-        <!-- Holographic Radar Display -->
+        <!-- Radar Viewport -->
         <div class="radar-viewport">
           <div class="radar-grid-ring ring-1"></div>
           <div class="radar-grid-ring ring-2"></div>
@@ -147,11 +192,13 @@
           <div class="radar-blip blip-2"></div>
           <div class="radar-blip blip-3"></div>
           <div class="radar-center-shield">
-            <span class="shield-emoji">🛡️</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
           </div>
         </div>
 
-        <!-- Audio-style Frequency Equalizer Waveform -->
+        <!-- Frequency Equalizer Waveform -->
         <div class="audio-equalizer" aria-hidden="true">
           <span class="eq-bar bar-1"></span>
           <span class="eq-bar bar-2"></span>
@@ -171,7 +218,7 @@
           <span class="eq-bar bar-16"></span>
         </div>
 
-        <h3 class="scanner-title">Deep E-Commerce Packet Inspection</h3>
+        <h3 class="scanner-title">Deep Marketplace Packet Audit</h3>
         <p class="scanner-subtitle" id="scanner-status-text">Connecting to ScraperAPI residential proxies...</p>
 
         <!-- Progress Track -->
@@ -185,10 +232,10 @@
           </div>
         </div>
 
-        <!-- Live Forensic Telemetry Ticker -->
+        <!-- Live Telemetry Stream -->
         <div class="telemetry-terminal">
           <span class="terminal-prefix">></span>
-          <span class="terminal-text" id="telemetry-ticker">INSPECTING TLS_AES_256_GCM_SHA384 PACKETS...</span>
+          <span class="terminal-text" id="telemetry-ticker">CONNECTING RESIDENTIAL PROXY POOL...</span>
         </div>
 
         <!-- 5 Forensic Checkpoints -->
@@ -196,16 +243,16 @@
           <div class="audit-step" id="step-1">
             <div class="step-num">01</div>
             <div class="step-details">
-              <span class="step-title">Proxy Tunnel & IP Rotation</span>
-              <span class="step-desc">Establish residential proxy connection to bypass geo-blocks</span>
+              <span class="step-title">Residential Proxy Rotation</span>
+              <span class="step-desc">Bypass anti-bot firewalls and geo-rate limits</span>
             </div>
             <span class="step-status" id="step-status-1">Scanning...</span>
           </div>
           <div class="audit-step" id="step-2">
             <div class="step-num">02</div>
             <div class="step-details">
-              <span class="step-title">DOM Extraction & Product Photography</span>
-              <span class="step-desc">Extract title, 1500px hi-res photography & structured pricing</span>
+              <span class="step-title">DOM Extraction & Product Media</span>
+              <span class="step-desc">Harvest 1500px photography, title & price tags</span>
             </div>
             <span class="step-status" id="step-status-2">Pending...</span>
           </div>
@@ -213,23 +260,23 @@
             <div class="step-num">03</div>
             <div class="step-details">
               <span class="step-title">Review Corpus Scraping</span>
-              <span class="step-desc">Harvest verified ratings, customer reviews & submission timelines</span>
+              <span class="step-desc">Harvest verified ratings & customer histories</span>
             </div>
             <span class="step-status" id="step-status-3">Pending...</span>
           </div>
           <div class="audit-step" id="step-4">
             <div class="step-num">04</div>
             <div class="step-details">
-              <span class="step-title">Rivue AI Pattern Forensics</span>
-              <span class="step-desc">Detect bot clusters, unverified bursts & text-star sentiment mismatches</span>
+              <span class="step-title">AI Pattern Deception Forensics</span>
+              <span class="step-desc">Unmask duplicate templates & star-text sentiment mismatches</span>
             </div>
             <span class="step-status" id="step-status-4">Pending...</span>
           </div>
           <div class="audit-step" id="step-5">
             <div class="step-num">05</div>
             <div class="step-details">
-              <span class="step-title">Fair Value & Trust Score Calculation</span>
-              <span class="step-desc">Compute true adjusted rating and 90-day Worth-It price consensus</span>
+              <span class="step-title">Fair Value & Trust Index</span>
+              <span class="step-desc">Calculate true rating & 90-day Worth-It price baseline</span>
             </div>
             <span class="step-status" id="step-status-5">Pending...</span>
           </div>
@@ -244,7 +291,6 @@
         <div class="card product-card" data-tilt>
           <div class="card-inner">
             <div class="product-visual">
-              <div class="img-backdrop"></div>
               <img id="dash-img" class="product-thumb" src="https://images-na.ssl-images-amazon.com/images/P/B0D1XD1ZV3.01._SX500_.jpg" alt="Product Target" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80'" />
               <div class="marketplace-floating-badge" id="dash-marketplace">AMAZON</div>
             </div>
@@ -258,7 +304,7 @@
               <h2 id="dash-title" class="product-title">Analyzing listing data...</h2>
               <div class="intel-meta-row">
                 <div class="price-callout">
-                  <span class="meta-label">CURRENT LISTING</span>
+                  <span class="meta-label">CURRENT ASKING</span>
                   <span id="dash-price" class="meta-val-price">--</span>
                 </div>
                 <div class="meta-divider"></div>
@@ -288,14 +334,12 @@
                 <svg class="radial-gauge-svg" viewBox="0 0 160 160">
                   <defs>
                     <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stop-color="#6366f1" />
-                      <stop offset="50%" stop-color="#38bdf8" />
-                      <stop offset="100%" stop-color="#34d399" />
+                      <stop offset="0%" stop-color="#3b82f6" />
+                      <stop offset="50%" stop-color="#06b6d4" />
+                      <stop offset="100%" stop-color="#10b981" />
                     </linearGradient>
                   </defs>
-                  <!-- Background Track -->
                   <circle class="gauge-bg-circle" cx="80" cy="80" r="68"></circle>
-                  <!-- Active Animated Stroke -->
                   <circle id="gauge-stroke-fill" class="gauge-fill-circle" cx="80" cy="80" r="68"></circle>
                 </svg>
                 <div class="gauge-center-content">
@@ -318,7 +362,7 @@
                 <div class="rating-col rivue-adjusted">
                   <span class="rc-label">Rivue Rating</span>
                   <div class="rc-value accent"><span id="dash-rivue-rating">0.0</span><span class="star-sym">★</span></div>
-                  <span class="rc-status">Authentic</span>
+                  <span class="rc-status">Verified</span>
                 </div>
               </div>
             </div>
@@ -336,10 +380,15 @@
           <div class="card-inner">
             <div class="card-head-row">
               <div class="head-icon-title">
-                <div class="head-icon">🏷️</div>
+                <div class="head-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                  </svg>
+                </div>
                 <div>
                   <h3 class="card-title">Fair-Value Price Intelligence</h3>
-                  <span class="card-desc">Calculated against verified buyer satisfaction & price inflation</span>
+                  <span class="card-desc">Weighted against verified buyer sentiment & historical trends</span>
                 </div>
               </div>
               <div id="price-deal-badge" class="deal-pill badge-deal-fair">Calculating...</div>
@@ -387,7 +436,7 @@
             <!-- Deal Explanation Text -->
             <div class="deal-narrative-box">
               <p id="price-deal-explanation">
-                Analyzing price historical timeline against verified review sentiment...
+                Analyzing historical price fluctuations against verified customer satisfaction...
               </p>
             </div>
 
@@ -404,10 +453,18 @@
           <div class="card-inner">
             <div class="card-head-row">
               <div class="head-icon-title">
-                <div class="head-icon">🔬</div>
+                <div class="head-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="22" y1="12" x2="18" y2="12"></line>
+                    <line x1="6" y1="12" x2="2" y2="12"></line>
+                    <line x1="12" y1="6" x2="12" y2="2"></line>
+                    <line x1="12" y1="22" x2="12" y2="18"></line>
+                  </svg>
+                </div>
                 <div>
                   <h3 class="card-title">Threat & Deception Breakdown</h3>
-                  <span class="card-desc">Neural audit of bot phrasing and review burst velocity</span>
+                  <span class="card-desc">Machine audit of bot phrasing and review burst velocity</span>
                 </div>
               </div>
             </div>
@@ -458,7 +515,7 @@
               </div>
             </div>
 
-            <!-- Why it Differs Rationale -->
+            <!-- Forensic Rationale -->
             <div class="forensic-rationale-box">
               <div class="rationale-header">
                 <span class="rationale-badge">FORENSIC RATIONALE</span>
@@ -471,15 +528,19 @@
           </div>
         </div>
 
-        <!-- Bento Card 5: Verified Buyer Consensus (Pros & Cons) -->
+        <!-- Bento Card 5: Verified Buyer Consensus -->
         <div class="card consensus-card" data-tilt>
           <div class="card-inner">
             <div class="card-head-row">
               <div class="head-icon-title">
-                <div class="head-icon">💎</div>
+                <div class="head-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                </div>
                 <div>
                   <h3 class="card-title">Verified Buyer Consensus</h3>
-                  <span class="card-desc">Extracted purely from organic, verified purchaser accounts</span>
+                  <span class="card-desc">Extracted purely from organic verified purchaser accounts</span>
                 </div>
               </div>
             </div>
@@ -488,7 +549,7 @@
               <div class="pro-panel">
                 <div class="panel-pill pro-pill">
                   <span class="pill-sym">✓</span>
-                  <span>Authentic Advantages</span>
+                  <span>Documented Strengths</span>
                 </div>
                 <ul id="dash-pros" class="bullet-list pro-list"></ul>
               </div>
@@ -509,7 +570,15 @@
           <div class="card-inner">
             <div class="feed-header-row">
               <div class="head-icon-title">
-                <div class="head-icon">🔎</div>
+                <div class="head-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                </div>
                 <div>
                   <h3 class="card-title">Individual Review Forensics</h3>
                   <span class="card-desc">Inspect harvested reviews with neural sentiment validation</span>
@@ -518,15 +587,17 @@
             </div>
 
             <!-- Swipeable Star Filter Tabs -->
-            <div class="filter-tabs-carousel">
-              <button class="ftab active" data-filter="all">All (<span id="dash-cnt-all">0</span>)</button>
-              <button class="ftab" data-filter="5">5 ★ (<span id="dash-cnt-5">0</span>)</button>
-              <button class="ftab" data-filter="4">4 ★ (<span id="dash-cnt-4">0</span>)</button>
-              <button class="ftab" data-filter="3">3 ★ (<span id="dash-cnt-3">0</span>)</button>
-              <button class="ftab" data-filter="2">2 ★ (<span id="dash-cnt-2">0</span>)</button>
-              <button class="ftab" data-filter="1">1 ★ (<span id="dash-cnt-1">0</span>)</button>
-              <button class="ftab filter-flagged" data-filter="flagged">⚠️ Flagged (<span id="dash-cnt-flagged">0</span>)</button>
-              <button class="ftab filter-authentic" data-filter="authentic">✓ Authentic (<span id="dash-cnt-authentic">0</span>)</button>
+            <div class="filter-tabs-carousel-wrap">
+              <div class="filter-tabs-carousel">
+                <button class="ftab active" data-filter="all">All (<span id="dash-cnt-all">0</span>)</button>
+                <button class="ftab" data-filter="5">5 ★ (<span id="dash-cnt-5">0</span>)</button>
+                <button class="ftab" data-filter="4">4 ★ (<span id="dash-cnt-4">0</span>)</button>
+                <button class="ftab" data-filter="3">3 ★ (<span id="dash-cnt-3">0</span>)</button>
+                <button class="ftab" data-filter="2">2 ★ (<span id="dash-cnt-2">0</span>)</button>
+                <button class="ftab" data-filter="1">1 ★ (<span id="dash-cnt-1">0</span>)</button>
+                <button class="ftab filter-flagged" data-filter="flagged">⚠️ Flagged (<span id="dash-cnt-flagged">0</span>)</button>
+                <button class="ftab filter-authentic" data-filter="authentic">✓ Authentic (<span id="dash-cnt-authentic">0</span>)</button>
+              </div>
             </div>
 
             <!-- Injected Review Cards -->
@@ -538,79 +609,89 @@
 
     <!-- Platform Ecosystem Section -->
     <section class="platforms-section" id="how-it-works">
-      <div class="section-badge">OMNICHANNEL SECURITY</div>
-      <h2 class="platforms-heading">Deploy Rivue Across All Your Devices</h2>
-      <p class="platforms-sub">Inspect listings instantly whether you're browsing at your desk or shopping on your phone.</p>
+      <div class="section-badge">OMNICHANNEL VERIFICATION</div>
+      <h2 class="platforms-heading">Deploy Rivue Across Every Device</h2>
+      <p class="platforms-sub">Inspect listings seamlessly whether you're browsing at your desk or shopping on your phone.</p>
 
       <div class="platforms-grid">
         <!-- Chrome Extension Card -->
         <div class="platform-glass-card" data-tilt>
           <div class="platform-card-header">
-            <div class="platform-icon-wrap">🌐</div>
+            <div class="platform-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+            </div>
             <div class="platform-meta">
               <h3>Desktop Chrome Extension</h3>
-              <span class="platform-sub-tag">Manifest V3 • Real-Time Badge</span>
+              <span class="platform-sub-tag">Manifest V3 • In-Page Trust Badges</span>
             </div>
           </div>
           <p class="platform-text">
-            Automatically intercepts product pages on Amazon, Flipkart, Walmart, and Best Buy. Injects trust scores directly beside the marketplace rating and launches a forensic side panel on command.
+            Automatically inspects listings on Amazon, Flipkart, Walmart, and Best Buy. Injects trust scores directly beside the marketplace rating and launches a forensic side panel on demand.
           </p>
           <div class="platform-cta-row">
             <a href="downloads/Rivue-Chrome-Extension.zip" class="btn-download-cyber" download>
-              <span>Download Extension (.zip)</span>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
+              <span>Download Extension (.zip)</span>
             </a>
-          </div>
-          <div class="code-install-box">
-            <code>1. Unzip Rivue-Chrome-Extension.zip<br>2. Open chrome://extensions & enable Developer mode<br>3. Click "Load unpacked" & select folder</code>
+            <button class="btn-install-helper" id="btn-open-ext-guide" type="button">Installation Guide</button>
           </div>
         </div>
 
         <!-- Android App Card -->
         <div class="platform-glass-card highlighted-platform" data-tilt>
           <div class="platform-card-header">
-            <div class="platform-icon-wrap">📱</div>
+            <div class="platform-icon-wrap">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
+            </div>
             <div class="platform-meta">
               <h3>Android Mobile App</h3>
               <span class="platform-sub-tag">Native Capacitor Shell • Share Sheet Ready</span>
             </div>
           </div>
           <p class="platform-text">
-            While browsing in the Amazon or Flipkart app, tap <strong>Share ➔ Rivue</strong>. The app instantly captures the listing, rotates residential proxies, and reveals the true uncorrupted rating in seconds.
+            While browsing in the Amazon or Flipkart app on your phone, tap <strong>Share ➔ Rivue</strong>. The app captures the listing, rotates residential proxies, and recalculates the rating in seconds.
           </p>
           <div class="platform-cta-row">
             <a href="downloads/rivue-latest.apk" class="btn-download-cyber primary-cyber" download>
-              <span>Download Android APK</span>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
                 <line x1="12" y1="15" x2="12" y2="3"></line>
               </svg>
+              <span>Download Android APK</span>
             </a>
-          </div>
-          <div class="code-install-box">
-            <code>Built for Android 8.0+ • Instant APK Install<br>Features exact same cyber-forensic engine & tap animations</code>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Cyber-Forensic Footer -->
+  <!-- Editorial Footer -->
   <footer class="footer">
     <div class="footer-container">
       <div class="footer-brand">
-        <span class="footer-logo">🛡️</span>
-        <span class="footer-text">Rivue Cybernetics</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <span class="footer-text">Rivue Independent Intelligence</span>
       </div>
       <div class="footer-creds">
-        <span>ScraperAPI Residential Proxy Infrastructure</span>
+        <span>Residential Proxy Routing</span>
         <span class="footer-dot">•</span>
-        <span>Neural NLP Forensics Engine</span>
+        <span>Neural NLP Forensics</span>
+        <span class="footer-dot">•</span>
+        <span>24/7 Cloud Core</span>
       </div>
     </div>
   </footer>
@@ -622,17 +703,20 @@
       <div class="modal-drag-handle" aria-hidden="true"></div>
       <div class="modal-header">
         <div class="modal-title-row">
-          <span class="modal-icon">⚙️</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
           <div>
             <h3>API Server Connection</h3>
-            <span class="modal-subtitle">Connect web client or Android APK to backend</span>
+            <span class="modal-subtitle">Configure backend API endpoint for web & APK</span>
           </div>
         </div>
         <button id="btn-close-server-modal" class="modal-close" type="button" aria-label="Close modal">✕</button>
       </div>
 
       <p class="modal-desc">
-        Configure the backend API server URL (running <code>node dist/server.js</code> on port 3001).
+        Select an active server endpoint. The <strong>Universal Cloud Server</strong> works anywhere worldwide without running a local Mac server.
       </p>
 
       <div class="modal-form-group">
@@ -658,6 +742,59 @@
         <button id="btn-auto-detect" class="btn-secondary" type="button">✨ Auto-Detect Server</button>
         <button id="btn-test-server" class="btn-secondary" type="button">⚡ Test</button>
         <button id="btn-save-server" class="btn-primary" type="button">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chrome Extension Installation Guide Modal -->
+  <div id="extension-modal" class="modal-overlay hidden">
+    <div class="modal-backdrop-blur"></div>
+    <div class="modal-card ext-modal-card">
+      <div class="modal-drag-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+          <div>
+            <h3>Chrome Extension Installation Guide</h3>
+            <span class="modal-subtitle">Install in Google Chrome, Brave, Edge, or Arc in 3 steps</span>
+          </div>
+        </div>
+        <button id="btn-close-ext-modal" class="modal-close" type="button" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="ext-steps-container">
+        <div class="ext-step-item">
+          <div class="ext-step-num">1</div>
+          <div class="ext-step-body">
+            <strong>Download & Unzip</strong>
+            <p>Download the extension zip and extract it to a folder on your computer.</p>
+            <a href="downloads/Rivue-Chrome-Extension.zip" class="btn-secondary ext-download-btn" download>
+              ⬇️ Download Rivue-Chrome-Extension.zip
+            </a>
+          </div>
+        </div>
+
+        <div class="ext-step-item">
+          <div class="ext-step-num">2</div>
+          <div class="ext-step-body">
+            <strong>Open Chrome Extensions & Enable Developer Mode</strong>
+            <p>Open a new tab in Chrome, paste <code>chrome://extensions</code> in the address bar, and switch on the <strong>Developer mode</strong> toggle in the top-right corner.</p>
+          </div>
+        </div>
+
+        <div class="ext-step-item">
+          <div class="ext-step-num">3</div>
+          <div class="ext-step-body">
+            <strong>Click "Load unpacked" & Select Folder</strong>
+            <p>Click the <strong>Load unpacked</strong> button in the top-left corner, and select the unzipped <code>chrome-extension</code> folder. Done! Rivue is now active on all shopping sites.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-dismiss-ext-modal" class="btn-primary" type="button">Got it, Let's Go!</button>
       </div>
     </div>
   </div>

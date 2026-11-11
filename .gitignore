@@ -28,3 +28,6 @@ android-compose-backup/
 # Secrets
 .env
 .env.local
+
+# Local binaries
+bin/
