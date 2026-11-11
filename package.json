@@ -4,6 +4,8 @@
   "description": "**Rivue** is an intelligent, cross-platform product review integrity and fair-value valuation system that helps consumers identify fake, duplicate, paid, and misleading reviews across major e-commerce marketplaces (Amazon, Flipkart, Walmart, Best Buy, etc.).",
   "main": "index.js",
   "scripts": {
+    "build": "cd backend && npm install && npm run build",
+    "start": "node backend/dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

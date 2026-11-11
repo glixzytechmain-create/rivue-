@@ -1,0 +1,23 @@
+# ==============================================================================
+# RENDER BLUEPRINT SPECIFICATION (24/7 Free Cloud Hosting)
+# Automatically deploys the Rivue API + Web Console on Render.com
+# ==============================================================================
+
+services:
+  - type: web
+    name: rivue-api
+    runtime: node
+    plan: free
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: node backend/dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: SCRAPERAPI_KEY
+        value: ab556b0c92d0ea6d44adef473e433f4c
+      - key: ANAKIN_API_KEY
+        value: ask_d04b2eaaa4f91c99e4ab0611de92b20d24de758fbba5a5dab4cb005c96e5f8b2
+      - key: ANAKIN_API_BASE
+        value: https://api.anakin.io/v1
